@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --bg: #c4a093;
+    --bgSoft: #f5edeb;
+    --text: #010101;
+    --textSoft: #a4a4a4;
+    --btn: #2c4275;
+}
