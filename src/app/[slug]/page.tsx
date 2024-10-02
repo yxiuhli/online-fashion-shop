@@ -82,7 +82,7 @@ const SinglePage = async ({ params }: { params: { slug: string } }) => {
         </Suspense>
         <div className="h-[2px] bg-gray-100" />
         <h1 className="text-2xl py-8">Detail parameters</h1>
-        <Descriptions bordered items={parameterItems} />;
+        <Descriptions bordered items={parameterItems} />
         <h1 className="text-2xl py-8">Product description</h1>
 
         {product.description}
