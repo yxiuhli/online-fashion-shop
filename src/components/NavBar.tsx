@@ -5,6 +5,8 @@ import Image from "next/image";
 import SearchBar from "./SearchBar";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
+import { title } from "process";
+
 // import NavIcons from "./NavIcons";
 
 const NavIcons = dynamic(() => import("./NavIcons"), { ssr: false });
@@ -47,7 +49,7 @@ const NavBar = () => {
         <div className="hidden sm:flex flex-col justify-center gap-8 h-full">
           {/* LEFT */}
           <div className="flex items-center justify-between gap-12">
-            <Link href="/" className="flex items-center gap-3">
+            <Link href="/loginpage" className="flex items-center gap-3">
               <Image src="/logo.png" alt="" width={24} height={24} />
               <div className="text-3xl tracking-wide font-bold font-[Garamond]">
                 BRAND
