@@ -5,6 +5,8 @@ import { LoginState } from "@wix/sdk";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useState } from "react";
+import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
+
 
 enum MODE {
   LOGIN = "LOGIN",
@@ -131,66 +133,81 @@ const LoginPage = () => {
    };
 
   return (
+
     <div className="mt-10 h-[calc(100vh-80px)] px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 flex items-center justify-center">
+    <div className="bg-white p-8 shadow-lg rounded-lg border-2 border-red-300">
       <form className="flex flex-col gap-4 " onSubmit={handleSubmit}>
         <h1 className="text-2xl font-semibold text-center">{formTitle}</h1>
         {mode === MODE.REGISTER ? (
-          <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-700">Username</label>
-            <input
-              type="text"
-              name="username"
-              placeholder="john"
-              className="ring-2 ring-red-300 rounded-md p-4"
-              onChange={(e) => setUsername(e.target.value)}
-            />
-          </div>
-        ) : null}
-        {mode !== MODE.EMAIL_VERIFICATION ? (
-          <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-700">E-mail</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="john@gmail.com"
-              className="ring-2 ring-red-300 rounded-md p-4"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-        ) : (
-          <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-700">Verification Code</label>
-            <input
-              type="text"
-              name="emailCode"
-              placeholder="Code"
-              className="ring-2 ring-red-300 rounded-md p-4"
-              onChange={(e) => setEmailCode(e.target.value)}
-            />
-          </div>
-        )}
-        {mode === MODE.LOGIN || mode === MODE.REGISTER ? (
-          <div className="flex flex-col gap-2">
-            <label className="text-sm text-gray-700">Password</label>
-            <input
-              type="password"
-              name="password"
-              placeholder="Enter your password"
-              className="ring-2 ring-red-300 rounded-md p-4"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </div>
-        ) : null}
-        {mode === MODE.LOGIN && (
-          <div
-            className="text-sm underline cursor-pointer"
-            onClick={() => setMode(MODE.RESET_PASSWORD)}
-          >
-            Forgot Password?
-          </div>
-        )}
+    <div className="flex flex-col gap-2">
+      <label className="text-sm text-gray-700">Username</label>
+      <div className="relative">
+        <input
+          type="text"
+          name="username"
+          placeholder="john"
+          className="ring-2 ring-red-300 rounded-md p-2 pr-10" // Added padding-right for icon space
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <FaUser className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+      </div>
+    </div>
+  ) : null}
+
+{mode !== MODE.EMAIL_VERIFICATION ? (
+  <div className="flex flex-col gap-2">
+    <label className="text-sm text-gray-700">E-mail</label>
+    <div className="relative">  {/* Added relative positioning */}
+      <input
+        type="email"
+        name="email"
+        placeholder="john@gmail.com"
+        className="ring-2 ring-red-300 rounded-md p-2 pr-10" // Added padding-right for icon space
+        onChange={(e) => setEmail(e.target.value)}
+      />
+      <FaEnvelope  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
+    </div>
+  </div>
+) : (
+  <div className="flex flex-col gap-2">
+    <label className="text-sm text-gray-700">Verification Code</label>
+    <input
+      type="text"
+      name="emailCode"
+      placeholder="Code"
+      className="ring-2 ring-red-300 rounded-md p-2"
+      onChange={(e) => setEmailCode(e.target.value)}
+    />
+  </div>
+)}
+
+{mode === MODE.LOGIN || mode === MODE.REGISTER ? (
+  <div className="flex flex-col gap-2">
+    <label className="text-sm text-gray-700">Password</label>
+    <div className="relative"> {/* Added relative positioning */}
+      <input
+        type="password"
+        name="password"
+        placeholder="Enter your password"
+        className="ring-2 ring-red-300 rounded-md p-2 pr-10" // Added padding-right for icon space
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <FaLock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" /> {/* FaLock icon */}
+    </div>
+  </div>
+) : null}
+
+{mode === MODE.LOGIN && (
+  <div
+    className="text-sm underline cursor-pointer"
+    onClick={() => setMode(MODE.RESET_PASSWORD)}
+  >
+    Forgot Password?
+  </div>
+)}
+
         <button
-          className="bg-red-300 text-white p-2 rounded-md disabled:bg-pink-200 disabled:cursor-not-allowed"
+          className="bg-red-300 text-white p-1 rounded-md disabled:bg-pink-200 disabled:cursor-not-allowed"
           disabled={isLoading}
         >
           {isLoading ? "Loading..." : buttonTitle}
@@ -222,6 +239,7 @@ const LoginPage = () => {
         )}
         {message && <div className="text-green-600 text-sm">{message}</div>}
       </form>
+      </div>
     </div>
   );
 };
