@@ -18,16 +18,14 @@ const Filter = () => {
   return (
     <div className="mt-12 flex justify-between">
       <div className="flex gap-6 flex-wrap">
-        <select
-          name="type"
-          id=""
-          className="py-2 px-4 rounded-2xl text-xs font-medium bg-[#EBEDED]"
+        <div className="py-2 px-4 text-sm font-medium bg-white">Filter</div>
+        <input
+          type="text"
+          name="name"
+          placeholder="name"
+          className="text-xs rounded-2xl pl-2 w-24 ring-1 ring-gray-400"
           onChange={handleFilterChange}
-        >
-          <option>Type</option>
-          <option value="physical">Physical</option>
-          <option value="digital">Digital</option>
-        </select>
+        />
         <input
           type="text"
           name="min"
@@ -42,19 +40,6 @@ const Filter = () => {
           className="text-xs rounded-2xl pl-2 w-24 ring-1 ring-gray-400"
           onChange={handleFilterChange}
         />
-        {/* TODO: Filter Categories */}
-        {/* <select
-          name="cat"
-          className="py-2 px-4 rounded-2xl text-xs font-medium bg-[#EBEDED]"
-          onChange={handleFilterChange}
-        >
-          <option>Category</option>
-          <option value="">New Arrival</option>
-          <option value="">Popular</option>
-        </select>
-        <select name="" id="" className="py-2 px-4 rounded-2xl text-xs font-medium bg-[#EBEDED]">
-          <option>All Filters</option>
-        </select> */}
       </div>
       <div className="">
         <select
@@ -66,8 +51,8 @@ const Filter = () => {
           <option>Sort By</option>
           <option value="asc_price">Price (low to high)</option>
           <option value="desc_price">Price (high to low)</option>
-          {/* <option value="asc_lastUpdated">Newest</option>
-          <option value="desc_lastUpdated">Oldest</option> */}
+          <option value="asc_lastUpdated">Newest</option>
+          <option value="desc_lastUpdated">Oldest</option>
         </select>
       </div>
     </div>

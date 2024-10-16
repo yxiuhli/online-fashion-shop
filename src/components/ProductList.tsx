@@ -22,22 +22,33 @@ const ProductList = async ({
     .queryProducts()
     .startsWith('name', searchParams?.name || '')
     .eq('collectionIds', categoryId)
-    .hasSome('productType', [searchParams?.type || 'physical', 'digital'])
-    .gt('priceData.price', searchParams?.min || 0)
-    .lt('priceData.price', searchParams?.max || 999999);
-  // .limit(limit || PRODUCT_PER_PAGE)
-  // .skip(searchParams?.page ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE) : 0);
+    .ge('priceData.price', searchParams?.min || 0)
+    .le('priceData.price', searchParams?.max || 999999)
+    .limit(limit || PRODUCT_PER_PAGE)
+    .skip(searchParams?.page ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE) : 0);
+
+  if (searchParams?.sort == 'asc_lastUpdated') {
+    productQuery.ascending('lastUpdated');
+  } else if (searchParams?.sort == 'desc_lastUpdated') {
+    productQuery.descending('lastUpdated');
+  }
 
   const res = await productQuery.find();
 
   const sortedProducts = res.items.sort((a: any, b: any) => {
     const priceA = a.priceData.price;
     const priceB = b.priceData.price;
+    const dateA = new Date(a.lastUpdated);
+    const dateB = new Date(b.lastUpdated);
 
     if (searchParams?.sort === 'asc_price') {
       return priceA - priceB; // Sắp xếp giá tăng dần
     } else if (searchParams?.sort === 'desc_price') {
       return priceB - priceA; // Sắp xếp giá giảm dần
+    } else if (searchParams?.sort == 'asc_lastUpdated') {
+      return dateA.getTime() - dateB.getTime();
+    } else if (searchParams?.sort == 'desc_lastUpdated') {
+      return dateB.getTime() - dateA.getTime();
     }
     return 0; // Không sắp xếp nếu không có sort
   });
