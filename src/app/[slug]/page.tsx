@@ -7,8 +7,7 @@ import Reviews from "@/components/Reviews";
 import { wixClientServer } from "@/lib/wixClientServer";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Badge, Descriptions } from 'antd';
-import type { DescriptionsProps } from 'antd';
+import { Badge, Descriptions } from "antd";
 
 const SinglePage = async ({ params }: { params: { slug: string } }) => {
   const wixClient = await wixClientServer();
@@ -24,10 +23,10 @@ const SinglePage = async ({ params }: { params: { slug: string } }) => {
 
   const product = products.items[0];
 
-  const parameterItems  = product?.additionalInfoSections?.map( item => ({
-    key : item.title,
-    label : item.title,
-    children : item.description,
+  const parameterItems = product?.additionalInfoSections?.map((item) => ({
+    key: item.title,
+    label: item.title,
+    children: item.description,
   }));
 
   return (
@@ -76,14 +75,13 @@ const SinglePage = async ({ params }: { params: { slug: string } }) => {
       <InfoStepper product={product!} />
       <hr />
       <div className="w-3/5 flex flex-col">
-        <h1 className="text-2xl py-8">User Reviews</h1>
+        <h1 className="text-2xl pt-2 pb-6">User Reviews</h1>
         <Suspense fallback="Loading...">
           <Reviews productId={product._id!} />
         </Suspense>
-        <div className="h-[2px] bg-gray-100" />
-        <h1 className="text-2xl py-8">Detail parameters</h1>
+        <h1 className="text-2xl pt-2 pb-6">Detail parameters</h1>
         <Descriptions bordered items={parameterItems} />
-        <h1 className="text-2xl py-8">Product description</h1>
+        <h1 className="text-2xl pt-8 pb-6">Product description</h1>
 
         {product.description}
       </div>
