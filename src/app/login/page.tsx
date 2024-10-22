@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import { useState } from "react";
 import { FaUser, FaEnvelope, FaLock } from "react-icons/fa";
+import { useEffect } from "react";
 
 
 enum MODE {
@@ -26,7 +27,9 @@ const LoginPage = () => {
    }
 
   const [mode, setMode] = useState(MODE.LOGIN);
-
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [generalError, setGeneralError] = useState("");  
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,6 +37,7 @@ const LoginPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [usernameError, setUsernameError] = useState("");
 
   const formTitle =
     mode === MODE.LOGIN
@@ -57,9 +61,40 @@ const LoginPage = () => {
     e.preventDefault();
     setIsLoading(true);
     setError("");
+    setEmailError("");
+    setPasswordError("");
+    setGeneralError("");
+    setUsernameError("");
+
+    let hasError = false;
+
+  // Kiểm tra email
+  if (!email) {
+    setEmailError("Please enter your email");
+    hasError = true;
+  }
+
+  // Kiểm tra mật khẩu (nếu mode là LOGIN hoặc REGISTER)
+  if (!password && (mode === MODE.LOGIN || mode === MODE.REGISTER)) {
+    setPasswordError("Please enter your password");
+    hasError = true;
+  }
+
+  if (mode === MODE.REGISTER && !username) {
+    setUsernameError("Please enter your username");
+    hasError = true;
+  }
+
+  // Nếu có lỗi, dừng xử lý và không gửi yêu cầu
+  if (hasError) {
+    setIsLoading(false);
+    return;
+  }
+
+  
 
     try {
-      let response;
+      let response: any; 
 
       switch (mode) {
         case MODE.LOGIN:
@@ -75,13 +110,25 @@ const LoginPage = () => {
             profile: { nickname: username },
           });
           break;
-        case MODE.RESET_PASSWORD:
-          response = await wixClient.auth.sendPasswordResetEmail(
-            email,
-            window.location.href
-          );
-          setMessage("Password reset email sent. Please check your e-mail.");
-          break;
+          case MODE.RESET_PASSWORD:
+            response = await wixClient.auth.sendPasswordResetEmail(
+              email,
+              window.location.href
+            );
+            if (response?.loginState === LoginState.SUCCESS) {
+              const tokens = await wixClient.auth.getMemberTokensForDirectLogin(
+                response.data.sessionToken!
+              );
+              Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), {
+                expires: 2,
+              });
+              wixClient.auth.setTokens(tokens);
+              setMessage("Password reset successful! You are being redirected.");
+              router.push("http://localhost:3000/login");  
+            } else {
+              setMessage("Password reset email sent. Please check your e-mail.");
+            }
+            break;
         case MODE.EMAIL_VERIFICATION:
           response = await wixClient.auth.processVerification({
             verificationCode: emailCode,
@@ -93,37 +140,57 @@ const LoginPage = () => {
 
       switch (response?.loginState) {
         case LoginState.SUCCESS:
-          setMessage("Successful! You are being redirected.");
-          const tokens = await wixClient.auth.getMemberTokensForDirectLogin(
-            response.data.sessionToken!
-          );
-
-          Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), {
-            expires: 2,
-          });
-          wixClient.auth.setTokens(tokens);
-          router.push("/");
-          break;
-        case LoginState.FAILURE:
-          if (
-            response.errorCode === "invalidEmail" ||
-            response.errorCode === "invalidPassword"
-          ) {
-            setError("Invalid email or password!");
-          } else if (response.errorCode === "emailAlreadyExists") {
-            setError("Email already exists!");
-          } else if (response.errorCode === "resetPassword") {
-            setError("You need to reset your password!");
+          if (mode === MODE.REGISTER) {
+            setMessage("Registration successful. Please verify your email with the code sent.");
+            setMode(MODE.EMAIL_VERIFICATION);
           } else {
-            setError("Something went wrong!");
+            setMessage("Successful! You are being redirected.");
+            const tokens = await wixClient.auth.getMemberTokensForDirectLogin(
+              response.data.sessionToken!
+            );
+            Cookies.set("refreshToken", JSON.stringify(tokens.refreshToken), {
+              expires: 2,
+            });
+            wixClient.auth.setTokens(tokens);
+            router.push("/");
           }
+          break;
+      
+        case LoginState.FAILURE:
+          
+          if (response?.errorCode === "invalidEmail") {
+            setEmailError("Invalid email address!");
+            setPasswordError(""); 
+          } else if (response?.errorCode === "invalidPassword") {
+            setPasswordError("Invalid password!");
+            setEmailError("");
+          } else if (response?.errorCode === "emailAlreadyExists") {
+            setEmailError("Email already exists!");
+            setPasswordError("");
+          } else if (response?.errorCode === "resetPassword") {
+            setGeneralError("You need to reset your password!");
+            setEmailError("");
+            setPasswordError("");
+          } else {
+            // Nếu không có errorCode rõ ràng, hãy đặt thông báo lỗi chung
+            setGeneralError("Invalid credentials or something went wrong.");
+          }
+          break;
+      
         case LoginState.EMAIL_VERIFICATION_REQUIRED:
           setMode(MODE.EMAIL_VERIFICATION);
+          break;
+      
         case LoginState.OWNER_APPROVAL_REQUIRED:
           setMessage("Your account is pending approval");
+          break;
+      
         default:
+          setGeneralError("Something went wrong!");
           break;
       }
+      
+      
     } catch (err) {
       console.log(err);
       setError("Something went wrong!");
@@ -131,6 +198,14 @@ const LoginPage = () => {
       setIsLoading(false);
     }
    };
+
+   useEffect(() => {
+    setEmailError("");
+    setPasswordError("");
+    setGeneralError("");
+    setError("");
+    setMessage("");
+  }, [mode]);
 
   return (
 
@@ -146,28 +221,30 @@ const LoginPage = () => {
           type="text"
           name="username"
           placeholder="john"
-          className="ring-2 ring-red-300 rounded-md p-2 pr-10" // Added padding-right for icon space
+          className="ring-2 ring-red-300 rounded-md p-2 pr-10 w-full"  // Added padding-right for icon space
           onChange={(e) => setUsername(e.target.value)}
         />
         <FaUser className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
       </div>
+      {usernameError && <div className="text-red-600 text-sm mt-1">{usernameError}</div>}
     </div>
   ) : null}
 
 {mode !== MODE.EMAIL_VERIFICATION ? (
   <div className="flex flex-col gap-2">
-    <label className="text-sm text-gray-700">E-mail</label>
-    <div className="relative">  {/* Added relative positioning */}
-      <input
-        type="email"
-        name="email"
-        placeholder="john@gmail.com"
-        className="ring-2 ring-red-300 rounded-md p-2 pr-10" // Added padding-right for icon space
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <FaEnvelope  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
-    </div>
+  <label className="text-sm text-gray-700">E-mail</label>
+  <div className="relative">
+    <input
+      type="email"
+      name="email"
+      placeholder="john@gmail.com"
+      className="ring-2 ring-red-300 rounded-md p-2 pr-10 w-full"
+      onChange={(e) => setEmail(e.target.value)}
+    />
+    <FaEnvelope className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
   </div>
+  {emailError && <div className="text-red-600 text-sm mt-1">{emailError}</div>}
+</div>
 ) : (
   <div className="flex flex-col gap-2">
     <label className="text-sm text-gray-700">Verification Code</label>
@@ -183,18 +260,19 @@ const LoginPage = () => {
 
 {mode === MODE.LOGIN || mode === MODE.REGISTER ? (
   <div className="flex flex-col gap-2">
-    <label className="text-sm text-gray-700">Password</label>
-    <div className="relative"> {/* Added relative positioning */}
-      <input
-        type="password"
-        name="password"
-        placeholder="Enter your password"
-        className="ring-2 ring-red-300 rounded-md p-2 pr-10" // Added padding-right for icon space
-        onChange={(e) => setPassword(e.target.value)}
-      />
-      <FaLock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" /> {/* FaLock icon */}
-    </div>
+  <label className="text-sm text-gray-700">Password</label>
+  <div className="relative">
+    <input
+      type="password"
+      name="password"
+      placeholder="Enter your password"
+      className="ring-2 ring-red-300 rounded-md p-2 pr-10 w-full"
+      onChange={(e) => setPassword(e.target.value)}
+    />
+    <FaLock className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" />
   </div>
+  {passwordError && <div className="text-red-600 text-sm mt-1">{passwordError}</div>}
+</div>
 ) : null}
 
 {mode === MODE.LOGIN && (
