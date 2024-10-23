@@ -4,10 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-// import CartModal from "./CartModal";
+import CartModal from "./CartModal";
 import { useWixClient } from "@/hooks/useWixClient";
 import Cookies from "js-cookie";
-// import { useCartStore } from "@/hooks/useCartStore";
+import { useCartStore } from "@/hooks/useCartStore";
 
 const NavIcons = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
@@ -20,8 +20,8 @@ const NavIcons = () => {
   const wixClient = useWixClient();
   const isLoggedIn = wixClient.auth.loggedIn();
 
-  //TEMPORARY
-  //const isLoggedIn = false;
+  // TEMPORARY
+  // const isLoggedIn = false;
 
   const handleProfile = () => {
     if (!isLoggedIn) {
@@ -31,9 +31,9 @@ const NavIcons = () => {
     }
   };
 
-  //AUTH WITH WIX-MANAGED AUTH
+  // AUTH WITH WIX-MANAGED AUTH
 
-  //const wixClient = useWixClient();
+  // const wixClient = useWixClient();
 
   // const login = async () => {
   //   const loginRequestData = wixClient.auth.generateOAuthData(
@@ -49,46 +49,29 @@ const NavIcons = () => {
 
   const handleLogout = async () => {
     setIsLoading(true);
-     Cookies.remove("refreshToken");
-     const { logoutUrl } = await wixClient.auth.logout(window.location.href);
+    Cookies.remove("refreshToken");
+    const { logoutUrl } = await wixClient.auth.logout(window.location.href);
     setIsLoading(false);
     setIsProfileOpen(false);
-     router.push(logoutUrl);
+    router.push(logoutUrl);
   };
 
 
-//   const { cart, counter, getCart } = useCartStore();
+  const { cart, counter, getCart } = useCartStore();
 
-//   useEffect(() => {
-//     getCart(wixClient);
-//   }, [wixClient, getCart]);
+  useEffect(() => {
+    getCart(wixClient);
+  }, [wixClient, getCart]);
 
   return (
     <div className="flex items-center gap-4 xl:gap-6 relative">
-      <div
-        className="relative cursor-pointer"
-        onClick={() => setIsCartOpen((prev) => !prev)}
-      >
-        <Image src="/cart.png" alt="" width={22} height={22} />
-        <div className="absolute -top-4 -right-4 w-6 h-6 bg-lama rounded-full text-white text-sm flex items-center justify-center">
-          {/* {counter} */}
-        </div>
-      </div>
-      {/* {isCartOpen && <CartModal />} */}
-      <Image
-        src="/notification.png"
-        alt=""
-        width={22}
-        height={22}
-        className="cursor-pointer"
-      />
-      
       <Image
         src="/profile.png"
         alt=""
         width={22}
         height={22}
         className="cursor-pointer"
+        // onClick={login}
         onClick={handleProfile}
       />
       {isProfileOpen && (
@@ -99,6 +82,23 @@ const NavIcons = () => {
           </div>
         </div>
       )}
+      <Image
+        src="/notification.png"
+        alt=""
+        width={22}
+        height={22}
+        className="cursor-pointer"
+      />
+      <div
+        className="relative cursor-pointer"
+        onClick={() => setIsCartOpen((prev) => !prev)}
+      >
+        <Image src="/cart.png" alt="" width={22} height={22} />
+        <div className="absolute -top-4 -right-4 w-6 h-6 bg-lama rounded-full text-white text-sm flex items-center justify-center">
+          {counter}
+        </div>
+      </div>
+      {isCartOpen && <CartModal />}
     </div>
   );
 };

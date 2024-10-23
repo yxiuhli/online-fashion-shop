@@ -64,6 +64,7 @@ const NavBar = () => {
       <div className="hidden sm:flex pb-4 items-center justify-start sm:gap-4 md:gap-6 lg:gap-8">
         {links.map((item) => (
           <Link
+            key={item.title}
             href={item.path}
             className={`px-2 rounded-2xl text-center text-[#331e12] ${
               pathName === item.path && "underline underline-offset-8 text-red-600"
