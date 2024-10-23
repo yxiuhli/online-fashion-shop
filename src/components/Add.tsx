@@ -57,7 +57,7 @@ const Add = ({
             <div className="text-sm">Product is out of stock</div>
           ) : (
             <div className="text-sm">
-              Only <span className="text-orange-500">{stockNumber} items</span> left! Don't miss it
+              Only <span className="text-orange-500">{stockNumber} items</span> left! Don&apos;t miss it
             </div>
           )}
         </div>

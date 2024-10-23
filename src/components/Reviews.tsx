@@ -8,7 +8,7 @@ const Reviews = async ({ productId }: { productId: string }) => {
   const reviews = await reviewRes.json();
 
   return reviews.data?.map((review: any) => (
-    <div className="">
+    <div key={review._id}>
       <div className="flex gap-2 items-start">
         {/* USER */}
         <Image

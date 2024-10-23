@@ -23,7 +23,7 @@ const items: MenuItem[] = [
   },
 ];
 
-const InfoStepper = async (product: any) => {
+const InfoStepper = (product: any) => {
   const [current, setCurrent] = useState("mail");
   const onClick = () => {};
   return (

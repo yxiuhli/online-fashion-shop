@@ -44,7 +44,7 @@ const CartPage = () => {
           <div className="px-16 flex flex-col gap-8">
             {/* ITEM */}
             {cart.lineItems.map((item) => 
-              <CartItem item={item}/>
+              <CartItem item={item} key={item._id}/>
             )}
           </div>
           {/* BOTTOM */}
