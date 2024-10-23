@@ -10,6 +10,10 @@ const Filter = () => {
   const handleFilterChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
     console.log(name, value);
+    if ((name === 'min' || name === 'max') && isNaN(Number(value))) {
+      console.log('Please enter a valid number');
+      return;
+    }
     const params = new URLSearchParams(searchParams);
     params.set(name, value);
     replace(`${pathname}?${params.toString()}`);
@@ -48,7 +52,9 @@ const Filter = () => {
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-white ring-1 ring-gray-400"
           onChange={handleFilterChange}
         >
-          <option>Sort By</option>
+          <option disabled selected>
+            Sort By
+          </option>
           <option value="asc_price">Price (low to high)</option>
           <option value="desc_price">Price (high to low)</option>
           <option value="asc_lastUpdated">Newest</option>
