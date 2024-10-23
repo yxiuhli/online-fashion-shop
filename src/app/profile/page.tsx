@@ -5,7 +5,7 @@ import { members } from '@wix/members';
 
 const ProfilePage = async () => {
   const wixClient = await wixClientServer();
-  const user = await wixClient.members.getCurrentMember({
+  const user: any = await wixClient.members.getCurrentMember({
     fieldsets: [members.Set.FULL],
   });
 
