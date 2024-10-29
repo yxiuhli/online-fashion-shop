@@ -1,6 +1,5 @@
 'use client';
 
-// Define the structure of userData based on the fields you are accessing
 interface UserData {
   contactId?: string | null;
   profile?: {
@@ -13,8 +12,6 @@ interface UserData {
   };
   loginEmail?: string | null;
 }
-
-// ProfileForm.js (Client Component)
 
 import { useState } from 'react';
 import UpdateButton from '@/components/UpdateButton';
@@ -44,6 +41,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           Profile updated successfully!
         </div>
       )}
+      <h1 className="text-2xl">Profile</h1>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <input type="text" hidden name="id" defaultValue={userData.contactId || ''} />
         <label htmlFor="username" className="text-sm text-gray-700">
