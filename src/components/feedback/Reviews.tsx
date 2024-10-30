@@ -1,14 +1,48 @@
+"use client"
 import { Divider } from "antd";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 
-const Reviews = async ({ productId }: { productId: string }) => {
+interface Review {
+  id: string;
+  title?: string;
+  content: string;
+  rating: number;
+}
+
+interface ReviewsResponse {
+  data: Review[];
+  meta?: {
+    total?: number;
+    page?: number;
+  };
+}
+
+const getReviews = async (productId :String)  => {
   const reviewRes = await fetch(
-    `https://api.fera.ai/v3/public/reviews?product.id=${productId}&public_key=${process.env.NEXT_PUBLIC_FERA_ID}`
-  );
+      `https://api.fera.ai/v3/public/reviews?product.id=${productId}&public_key=${process.env.NEXT_PUBLIC_FERA_ID}`
+    );
   const reviews = await reviewRes.json();
+  return reviews;
+}
 
-  return reviews.data?.map((review: any) => (
-    <div key={review._id}>
+const Reviews = ({ productId }: { productId: string }) => {
+  const [reviews,setReviews] = useState<ReviewsResponse>();
+  
+
+  useEffect(() => {
+    try {
+      getReviews(productId).then((data) => {
+        setReviews(data);
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  }, []);
+
+
+  return reviews?.data.map((review: any) => (
+    <div key={review.id}>
       <div className="flex gap-2 items-start">
         {/* USER */}
         <Image
