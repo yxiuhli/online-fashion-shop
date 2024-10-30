@@ -2,7 +2,7 @@
 import { useCartStore } from "@/hooks/useCartStore";
 import { useWixClient } from "@/hooks/useWixClient";
 import { currentCart } from "@wix/ecom";
-import CartItem from "@/components/CartItem";
+import CartItem from "@/components/cart/CartItem";
 
 const CartPage = () => {
   const wixClient = useWixClient();
@@ -35,17 +35,18 @@ const CartPage = () => {
   return (
     <div className="w-full px-32 flex flex-col gap-6">
       <h2 className="text-2xl font-semibold px-8 mt-6">Shopping Cart</h2>
-      {(!cart.lineItems?.length ? (
-        <div className="text-gray-400 text-center w-full text-3xl font-thin">Your cart is empty</div>
+      {!cart.lineItems?.length ? (
+        <div className="text-gray-400 text-center w-full text-3xl font-thin">
+          Your cart is empty
+        </div>
       ) : (
         <>
-          
           {/* LIST */}
           <div className="px-16 flex flex-col gap-8">
             {/* ITEM */}
-            {cart.lineItems.map((item) => 
-              <CartItem item={item} key={item._id}/>
-            )}
+            {cart.lineItems.map((item) => (
+              <CartItem item={item} key={item._id} />
+            ))}
           </div>
           {/* BOTTOM */}
           <div>
@@ -68,7 +69,7 @@ const CartPage = () => {
             </button>
           </div>
         </>
-      ))}
+      )}
     </div>
   );
 };

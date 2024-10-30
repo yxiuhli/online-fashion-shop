@@ -1,17 +1,17 @@
 "use client";
 import Link from "next/link";
-import Menu from "./Menu";
 import Image from "next/image";
-import SearchBar from "./SearchBar";
 import dynamic from "next/dynamic";
 import { usePathname } from "next/navigation";
 import { title } from "process";
+import Menu from "./Menu";
+import SearchBar from "./SearchBar";
 
 // import NavIcons from "./NavIcons";
 
 const NavIcons = dynamic(() => import("./NavIcons"), { ssr: false });
 
-const NavBar = () => {
+const Navbar = () => {
   const pathName = usePathname();
   const links = [
     {
@@ -79,4 +79,4 @@ const NavBar = () => {
   );
 };
 
-export default NavBar;
+export default Navbar;

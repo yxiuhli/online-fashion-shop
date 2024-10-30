@@ -2,7 +2,7 @@
 
 import { products } from "@wix/stores";
 import { useEffect, useState } from "react";
-import Add from "./Add";
+import Add from "./cart/Add";
 
 const CustomizeProducts = ({
   productId,
@@ -97,7 +97,6 @@ const CustomizeProducts = ({
                       : "white",
                     color: selected || disabled ? "white" : "#f35c7a",
                     boxShadow: disabled ? "none" : "",
-                    
                   }}
                   key={choice.description}
                   onClick={clickHandler}
