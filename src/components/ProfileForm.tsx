@@ -1,9 +1,17 @@
 'use client';
 
+import { useState } from 'react';
+import UpdateButton from '@/components/UpdateButton';
+import { updateUser } from '@/lib/action';
+import Image from 'next/image';
+
 interface UserData {
   contactId?: string | null;
   profile?: {
     nickname?: string | null;
+    photo?: {
+      url?: string | null;
+    };
   };
   contact?: {
     firstName?: string | null;
@@ -13,20 +21,38 @@ interface UserData {
   loginEmail?: string | null;
 }
 
-import { useState } from 'react';
-import UpdateButton from '@/components/UpdateButton';
-import { updateUser } from '@/lib/action';
-
 interface ProfileFormProps {
   userData: UserData;
 }
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
   const [showSuccess, setShowSuccess] = useState(false);
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const defaultAvatarUrl = '/profile.png';
+  const [imagePreview, setImagePreview] = useState(
+    userData.profile?.photo?.url || defaultAvatarUrl
+  );
+
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedFile = e.target.files[0];
+      setAvatar(selectedFile);
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(selectedFile);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
+
+    if (avatar) {
+      formData.append('avatar', avatar);
+    }
 
     await updateUser(formData);
     setShowSuccess(true);
@@ -42,8 +68,37 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
         </div>
       )}
       <h1 className="text-2xl">Profile</h1>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-8">
         <input type="text" hidden name="id" defaultValue={userData.contactId || ''} />
+        <div className="flex flex-col items-center justify-center relative">
+          {imagePreview && (
+            <div className="mb-4 relative">
+              <Image
+                src={imagePreview}
+                alt="Avatar"
+                width={120}
+                height={120}
+                className="rounded-full border-2 border-gray-300"
+              />
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                className="hidden"
+                id="file-input"
+              />
+              <button
+                type="button"
+                onClick={() => document.getElementById('file-input')?.click()}
+                className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-full w-8 h-8 flex items-center justify-center"
+              >
+                +
+              </button>
+            </div>
+          )}
+        </div>
+
         <label htmlFor="username" className="text-sm text-gray-700">
           Username
         </label>
@@ -54,6 +109,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           defaultValue={userData.profile?.nickname || 'noname'}
           className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
         />
+
         <label htmlFor="firstName" className="text-sm text-gray-700">
           First Name
         </label>
@@ -64,6 +120,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           defaultValue={userData.contact?.firstName || 'noname'}
           className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
         />
+
         <label htmlFor="lastName" className="text-sm text-gray-700">
           Last Name
         </label>
@@ -74,6 +131,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           defaultValue={userData.contact?.lastName || 'noname'}
           className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
         />
+
         <label htmlFor="address" className="text-sm text-gray-700">
           Address
         </label>
@@ -84,6 +142,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           defaultValue={userData.contact?.addresses?.[0]?.city || 'noaddress'}
           className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
         />
+
         <label htmlFor="email" className="text-sm text-gray-700">
           Email
         </label>
@@ -95,6 +154,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
           readOnly
         />
+
         <UpdateButton />
       </form>
     </div>
