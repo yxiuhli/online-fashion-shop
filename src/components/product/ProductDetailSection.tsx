@@ -2,11 +2,20 @@
 import { MutableRefObject, useRef, useState, useEffect } from "react";
 
 import { Suspense } from "react";
-import { Badge, Descriptions, Button, Menu } from "antd";
+import { Badge, Descriptions, Button } from "antd";
 import type { MenuProps } from "antd";
 
 import Reviews from "@/components/feedback/Reviews";
 import PinnedProduct from "./PinnedProduct";
+import Script from "next/script";
+
+declare global {
+  interface Window {
+    drift: {
+      openChat: () => void;
+    };
+  }
+}
 
 type MenuItem = Required<MenuProps>["items"][number];
 
@@ -51,7 +60,6 @@ const ProductDetailSection = ({ product }: { product: any }) => {
     const handleScroll = () => {
       if (stepperRef.current) {
         const detailRect = stepperRef.current.getBoundingClientRect();
-        // Show sticky card when detail section's top edge is at or above viewport top
         setShowStickyCard(detailRect.top <= 0);
       }
     };
@@ -77,12 +85,13 @@ const ProductDetailSection = ({ product }: { product: any }) => {
           </button>
         </div>
       </div>
+      <hr />
       <div className="grid grid-cols-3 gap-16">
         <div className="col-span-2">
           <h1 ref={reviewRef} className="text-2xl pt-2 pb-6">
             User Reviews
           </h1>
-            <Reviews productId={product._id!} />
+          <Reviews productId={product._id!} />
 
           <h1 ref={paramsRef} className="text-2xl pt-2 pb-6">
             Detail parameters
@@ -94,8 +103,9 @@ const ProductDetailSection = ({ product }: { product: any }) => {
           {product.description}
         </div>
         <div className="col-span-1">
-          <PinnedProduct display={showStickyCard} product={product}/>
+          <PinnedProduct display={showStickyCard} product={product} />
         </div>
+        <Script src="/drift.js" />
       </div>
     </div>
   );

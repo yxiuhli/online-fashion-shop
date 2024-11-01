@@ -4,6 +4,9 @@ import "./globals.css";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import { WixClientContextProvider } from "@/context/wixContext";
+import { LiveChatLoaderProvider } from "react-live-chat-loader";
+import LiveChatProvider from "@/context/LiveChatProvider";
+import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,9 +24,12 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <WixClientContextProvider>
-          <Navbar />
-          {children}
-          <Footer />
+          {/* <LiveChatProvider> */}
+          
+            <Navbar />
+            {children}
+            <Footer />
+          {/* </LiveChatProvider> */}
         </WixClientContextProvider>
       </body>
     </html>

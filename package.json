@@ -9,11 +9,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.5.1",
+    "@wix/bookings": "^1.0.441",
     "@wix/ecom": "^1.0.741",
     "@wix/members": "^1.0.102",
     "@wix/sdk": "^1.13.0",
     "@wix/stores": "^1.0.237",
-    "@wix/bookings": "^1.0.441",
     "antd": "^5.21.1",
     "isomorphic-dompurify": "^2.15.0",
     "js-cookie": "^3.0.5",
@@ -21,6 +22,7 @@
     "react": "^18",
     "react-dom": "^18",
     "react-icons": "^5.3.0",
+    "react-live-chat-loader": "^2.9.2",
     "zustand": "^5.0.0-rc.2"
   },
   "devDependencies": {
