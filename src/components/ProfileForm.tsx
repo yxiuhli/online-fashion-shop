@@ -4,6 +4,7 @@ import { useState } from 'react';
 import UpdateButton from '@/components/UpdateButton';
 import { updateUser } from '@/lib/action';
 import Image from 'next/image';
+import { files } from '@wix/media';
 
 interface UserData {
   contactId?: string | null;
@@ -25,6 +26,35 @@ interface ProfileFormProps {
   userData: UserData;
 }
 
+const getUploadUrl = async (): Promise<string | null> => {
+  try {
+    const mimeType = 'image/png';
+    const options = {
+      fileName: 'myFile.png',
+    };
+    console.log('Uploading');
+
+    try {
+      const response = await files.generateFileUploadUrl(mimeType, options);
+      console.log('Response:', response);
+
+      if (response && response.uploadUrl) {
+        return response.uploadUrl;
+      } else {
+        console.error('No upload URL returned in response.');
+        console.error('Response details:', response);
+        return null;
+      }
+    } catch (error) {
+      console.error('Error generating upload URL:', error);
+      return null;
+    }
+  } catch (error) {
+    console.error('Error generating upload URL:', JSON.stringify(error, null, 2));
+    return null;
+  }
+};
+
 const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [avatar, setAvatar] = useState<File | null>(null);
@@ -33,10 +63,12 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
     userData.profile?.photo?.url || defaultAvatarUrl
   );
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const selectedFile = e.target.files[0];
       setAvatar(selectedFile);
+      const uploadUrl = await getUploadUrl();
+      console.log('uploadUrl:', uploadUrl);
 
       const reader = new FileReader();
       reader.onloadend = () => {

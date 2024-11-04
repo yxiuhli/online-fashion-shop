@@ -2,6 +2,7 @@
 
 import { members } from '@wix/members';
 import { wixClientServer } from './wixClientServer';
+import { files } from '@wix/media';
 
 export const updateUser = async (formData: FormData) => {
   const wixClient = await wixClientServer();
@@ -29,5 +30,20 @@ export const updateUser = async (formData: FormData) => {
     });
   } catch (error) {
     console.log('Error updating member:', error);
+  }
+};
+
+export const getUploadUrl = async (): Promise<string | null> => {
+  try {
+    const mimeType = 'image/png';
+    const options = {};
+    console.log('Uploading');
+
+    const response = await files.generateFileUploadUrl(mimeType, options);
+    console.log(response);
+    return response.uploadUrl;
+  } catch (error) {
+    console.error('Error generating upload URL:', error);
+    return null;
   }
 };
