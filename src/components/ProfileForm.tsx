@@ -3,8 +3,7 @@
 import { useState } from 'react';
 import UpdateButton from '@/components/UpdateButton';
 import { updateUser } from '@/lib/action';
-import Image from 'next/image';
-import { files } from '@wix/media';
+import { CldImage, CldUploadButton } from 'next-cloudinary';
 
 interface UserData {
   contactId?: string | null;
@@ -26,55 +25,17 @@ interface ProfileFormProps {
   userData: UserData;
 }
 
-const getUploadUrl = async (): Promise<string | null> => {
-  try {
-    const mimeType = 'image/png';
-    const options = {
-      fileName: 'myFile.png',
-    };
-    console.log('Uploading');
-
-    try {
-      const response = await files.generateFileUploadUrl(mimeType, options);
-      console.log('Response:', response);
-
-      if (response && response.uploadUrl) {
-        return response.uploadUrl;
-      } else {
-        console.error('No upload URL returned in response.');
-        console.error('Response details:', response);
-        return null;
-      }
-    } catch (error) {
-      console.error('Error generating upload URL:', error);
-      return null;
-    }
-  } catch (error) {
-    console.error('Error generating upload URL:', JSON.stringify(error, null, 2));
-    return null;
-  }
-};
-
 const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
   const [showSuccess, setShowSuccess] = useState(false);
-  const [avatar, setAvatar] = useState<File | null>(null);
   const defaultAvatarUrl = '/profile.png';
   const [imagePreview, setImagePreview] = useState(
     userData.profile?.photo?.url || defaultAvatarUrl
   );
 
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      const selectedFile = e.target.files[0];
-      setAvatar(selectedFile);
-      const uploadUrl = await getUploadUrl();
-      console.log('uploadUrl:', uploadUrl);
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(selectedFile);
+  const handleUpload = (result: any) => {
+    if (result.event === 'success') {
+      const uploadedImageUrl = result.info.secure_url;
+      setImagePreview(uploadedImageUrl);
     }
   };
 
@@ -82,8 +43,8 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
 
-    if (avatar) {
-      formData.append('avatar', avatar);
+    if (imagePreview !== defaultAvatarUrl) {
+      formData.append('avatar', imagePreview);
     }
 
     await updateUser(formData);
@@ -106,27 +67,16 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
         <div className="flex flex-col items-center justify-center relative">
           {imagePreview && (
             <div className="mb-4 relative">
-              <Image
+              <CldImage
                 src={imagePreview}
                 alt="Avatar"
                 width={120}
                 height={120}
                 className="rounded-full border-2 border-gray-300"
               />
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleAvatarChange}
-                className="hidden"
-                id="file-input"
-              />
-              <button
-                type="button"
-                onClick={() => document.getElementById('file-input')?.click()}
-                className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2 text-white bg-red-500 hover:bg-red-600 focus:ring-4 focus:ring-blue-300 font-medium rounded-full w-8 h-8 flex items-center justify-center"
-              >
-                +
-              </button>
+              <CldUploadButton uploadPreset="ml_default" onSuccess={handleUpload} className="mt-4">
+                Upload Avatar
+              </CldUploadButton>
             </div>
           )}
         </div>

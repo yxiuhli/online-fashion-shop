@@ -3,7 +3,6 @@ import { collections, products } from '@wix/stores';
 import { orders } from '@wix/ecom';
 import { cookies } from 'next/headers';
 import { members } from '@wix/members';
-import { files } from '@wix/media';
 
 export const wixClientServer = async () => {
   let refreshToken;
@@ -19,7 +18,6 @@ export const wixClientServer = async () => {
       collections,
       orders,
       members,
-      files,
     },
     auth: OAuthStrategy({
       clientId: process.env.NEXT_PUBLIC_WIX_CLIENT_ID!,

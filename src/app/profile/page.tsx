@@ -33,6 +33,12 @@ const ProfilePage = async () => {
         <div className="w-full md:w-1/2">
           <h1 className="text-2xl">Orders</h1>
           <div className="mt-12 flex flex-col">
+            <div className="flex justify-between px-2 py-2 font-bold border-b">
+              <span className="w-1/4">Order ID</span>
+              <span className="w-1/4">Created Date</span>
+              <span className="w-1/4">Price</span>
+              <span className="w-1/4">Status</span>
+            </div>
             {orderRes.orders.map((order) => (
               <Link
                 href={`/orders/${order._id}`}
@@ -40,11 +46,21 @@ const ProfilePage = async () => {
                 className="flex justify-between px-2 py-6 rounded-md hover:bg-green-50 even:bg-slate-100"
               >
                 <span className="w-1/4">{order._id?.substring(0, 10)}...</span>
-                <span className="w-1/4">${order.priceSummary?.subtotal?.amount}</span>
                 {order._createdDate && (
-                  <span className="w-1/4">{new Date(order._createdDate).toLocaleDateString()}</span>
+                  <span className="w-1/4  text-gray-500">
+                    {new Date(order._createdDate).toLocaleDateString()}
+                  </span>
                 )}
-                <span className="w-1/4">{order.status}</span>
+                <span className="w-1/4  text-gray-500">
+                  ${order.priceSummary?.subtotal?.amount}
+                </span>
+                <span
+                  className={`w-1/4 ${order.status === 'INITIALIZED' ? 'text-green-500' : ''} 
+                        ${order.status === 'APPROVED' ? 'text-blue-500' : ''} 
+                        ${order.status === 'CANCELED' ? 'text-red-500' : ''}`}
+                >
+                  {order.status}
+                </span>
               </Link>
             ))}
           </div>
