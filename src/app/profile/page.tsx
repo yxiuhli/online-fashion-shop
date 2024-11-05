@@ -26,16 +26,16 @@ const ProfilePage = async () => {
     });
 
     return (
-      <div className="flex flex-col md:flex-row gap-24 items-center px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64">
-        <div className="w-full md:w-1/2">
+      <div className="flex flex-col md:flex-row gap-24 items-center px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 pt-5">
+        <div className="w-full md:w-1/2 border rounded-lg p-4 shadow-md">
           <ProfileForm userData={user.member} />
         </div>
-        <div className="w-full md:w-1/2">
+        <div className="w-full md:w-1/2 border rounded-lg p-4 shadow-md">
           <h1 className="text-2xl">Orders</h1>
           <div className="mt-12 flex flex-col">
             <div className="flex justify-between px-2 py-2 font-bold border-b">
-              <span className="w-1/4">Order ID</span>
-              <span className="w-1/4">Created Date</span>
+              <span className="w-1/4">ID</span>
+              <span className="w-1/4">Date</span>
               <span className="w-1/4">Price</span>
               <span className="w-1/4">Status</span>
             </div>

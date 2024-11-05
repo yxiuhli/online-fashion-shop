@@ -4,6 +4,7 @@ import { useState } from 'react';
 import UpdateButton from '@/components/UpdateButton';
 import { updateUser } from '@/lib/action';
 import { CldImage, CldUploadButton } from 'next-cloudinary';
+import SuccessPopup from '@/components/SuccessPopup';
 
 interface UserData {
   contactId?: string | null;
@@ -27,7 +28,8 @@ interface ProfileFormProps {
 
 const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
   const [showSuccess, setShowSuccess] = useState(false);
-  const defaultAvatarUrl = '/profile.png';
+  const defaultAvatarUrl =
+    'https://res.cloudinary.com/dg1v135vg/image/upload/v1730799660/istockphoto-1495088043-612x612_nsmhze.jpg';
   const [imagePreview, setImagePreview] = useState(
     userData.profile?.photo?.url || defaultAvatarUrl
   );
@@ -56,9 +58,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
   return (
     <div>
       {showSuccess && (
-        <div className="bg-green-100 text-green-800 p-4 rounded-md mb-4">
-          Profile updated successfully!
-        </div>
+        <SuccessPopup
+          message="Profile updated successfully!"
+          onClose={() => setShowSuccess(false)}
+        />
       )}
       <h1 className="text-2xl">Profile</h1>
 
@@ -69,7 +72,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
             <div className="mb-4 relative">
               <CldImage
                 src={imagePreview}
-                alt="Avatar"
+                alt=""
                 width={120}
                 height={120}
                 className="rounded-full border-2 border-gray-300"
@@ -89,7 +92,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           type="text"
           name="username"
           defaultValue={userData.profile?.nickname || 'noname'}
-          className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
+          className="ring-1 ring-gray-300 rounded-md p-2"
         />
 
         <label htmlFor="firstName" className="text-sm text-gray-700">
@@ -100,7 +103,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           type="text"
           name="firstName"
           defaultValue={userData.contact?.firstName || 'noname'}
-          className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
+          className="ring-1 ring-gray-300 rounded-md p-2"
         />
 
         <label htmlFor="lastName" className="text-sm text-gray-700">
@@ -111,7 +114,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           type="text"
           name="lastName"
           defaultValue={userData.contact?.lastName || 'noname'}
-          className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
+          className="ring-1 ring-gray-300 rounded-md p-2"
         />
 
         <label htmlFor="address" className="text-sm text-gray-700">
@@ -122,7 +125,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           type="text"
           name="address"
           defaultValue={userData.contact?.addresses?.[0]?.city || 'noaddress'}
-          className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
+          className="ring-1 ring-gray-300 rounded-md p-2"
         />
 
         <label htmlFor="email" className="text-sm text-gray-700">
@@ -133,7 +136,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
           type="text"
           name="email"
           defaultValue={userData.loginEmail || 'noemail'}
-          className="ring-1 ring-gray-300 rounded-md p-2 max-w-96"
+          className="ring-1 ring-gray-300 rounded-md p-2"
           readOnly
         />
 
