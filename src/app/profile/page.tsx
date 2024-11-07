@@ -41,7 +41,7 @@ const ProfilePage = async () => {
             </div>
             {orderRes.orders.map((order) => (
               <Link
-                href={`/orders/${order._id}`}
+                href={`/order/${order._id}`}
                 key={order._id}
                 className="flex justify-between px-2 py-6 rounded-md hover:bg-green-50 even:bg-slate-100"
               >
