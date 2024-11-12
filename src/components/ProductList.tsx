@@ -42,15 +42,15 @@ const ProductList = async ({
     const dateB = new Date(b.lastUpdated);
 
     if (searchParams?.sort === 'asc_price') {
-      return priceA - priceB; // Sắp xếp giá tăng dần
+      return priceA - priceB;
     } else if (searchParams?.sort === 'desc_price') {
-      return priceB - priceA; // Sắp xếp giá giảm dần
+      return priceB - priceA;
     } else if (searchParams?.sort == 'asc_lastUpdated') {
-      return dateA.getTime() - dateB.getTime();
-    } else if (searchParams?.sort == 'desc_lastUpdated') {
       return dateB.getTime() - dateA.getTime();
+    } else if (searchParams?.sort == 'desc_lastUpdated') {
+      return dateA.getTime() - dateB.getTime();
     }
-    return 0; // Không sắp xếp nếu không có sort
+    return 0;
   });
 
   return (
@@ -62,6 +62,11 @@ const ProductList = async ({
           key={product._id}
         >
           <div className="relative w-full h-80">
+            {product.discount?.value && product.discount.value > 0 && (
+              <div className="absolute top-2 left-2 bg-[#FDCAC9] text-white text-xs font-semibold px-2 py-1 rounded z-20">
+                -{product.discount.value}%
+              </div>
+            )}
             <Image
               src={product.media?.mainMedia?.image?.url || '/product.png'}
               alt=""
