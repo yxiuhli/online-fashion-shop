@@ -72,9 +72,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
             <div className="mb-4 relative">
               <CldImage
                 src={imagePreview}
-                alt=""
+                alt="Avatar"
                 width={120}
                 height={120}
+                quality="auto"
+                crop="fill"
                 className="rounded-full border-2 border-gray-300"
               />
               <CldUploadButton uploadPreset="ml_default" onSuccess={handleUpload} className="mt-4">
