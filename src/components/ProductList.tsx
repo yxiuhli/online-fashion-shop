@@ -63,7 +63,7 @@ const ProductList = async ({
         >
           <div className="relative w-full h-80">
             {product.discount?.value && product.discount.value > 0 && (
-              <div className="absolute top-2 left-2 bg-[#FDCAC9] text-white text-xs font-semibold px-2 py-1 rounded z-20">
+              <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded z-20">
                 -{product.discount.value}%
               </div>
             )}
@@ -86,8 +86,24 @@ const ProductList = async ({
           </div>
           <div className="flex justify-between">
             <span className="font-medium">{product.name}</span>
-            <span className="font-semibold">${product.price?.price}</span>
+            <div className="flex items-center">
+              {product.priceData?.discountedPrice &&
+              product.priceData.price &&
+              product.priceData?.discountedPrice < product.priceData?.price ? (
+                <>
+                  <span className="font-semibold line-through mr-2">
+                    ${product.priceData?.price}
+                  </span>
+                  <span className="font-semibold text-red-500">
+                    ${product.priceData?.discountedPrice}
+                  </span>
+                </>
+              ) : (
+                <span className="font-semibold">${product.priceData?.price}</span>
+              )}
+            </div>
           </div>
+
           {product.additionalInfoSections && (
             <div
               className="text-sm text-gray-500"
