@@ -59,8 +59,6 @@ const OrderPage = async ({ params }: { params: { slug: string } }) => {
     totalPrice: Number(item.price?.amount) * item.quantity!,
   }));
 
-  console.log(order);
-
   return (
     <div className="container mx-32  p-4">
       <h1 className="text-2xl font-semibold mb-4">Order Details</h1>

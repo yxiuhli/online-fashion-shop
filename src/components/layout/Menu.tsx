@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import SearchBar from "./SearchBar";
+import NavIcons from "./NavIcons";
 
 const Menu = () => {
   const [open, setOpen] = useState(false);
@@ -18,14 +20,29 @@ const Menu = () => {
         onClick={() => setOpen((prev) => !prev)}
       />
       {open && (
-        <div className="absolute bg-black text-white left-0 top-20 w-full h-[calc(100vh-80px)] flex flex-col items-center justify-center gap-8 text-xl  z-30">
-          <Link href="/">Homepage</Link>
-          <Link href="/">Shop</Link>
-          <Link href="/">Deals</Link>
-          <Link href="/">About</Link>
-          <Link href="/">Contact</Link>
-          <Link href="/">Logout</Link>
-          <Link href="/">Cart(1)</Link>
+        <div className="absolute bg-slate-400 text-white left-0 top-28 w-full h-[calc(80vh)] flex flex-col items-center justify-center gap-8 text-xl  z-30">
+          <Link className="hover:text-blue-700" href="/">
+            Homepage
+          </Link>
+          <Link className="hover:text-blue-700" href="/list?cat=all-products">
+            Products
+          </Link>
+          <Link className="hover:text-blue-700" href="/list?cat=shirts">
+            Shirts
+          </Link>
+
+          <Link className="hover:text-blue-700" href="/list?cat=pants">
+            Pants
+          </Link>
+   
+
+          <Link className="hover:text-blue-700" href="/about">
+            About
+          </Link>
+          
+          <div>
+            <SearchBar />
+          </div>
         </div>
       )}
     </div>

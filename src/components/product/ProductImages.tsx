@@ -1,12 +1,10 @@
 "use client";
 import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Button, Carousel } from "antd";
 import Image from "next/image";
 import { useState } from "react";
 
 const ProductImages = ({ items }: { items: any }) => {
   const [index, setIndex] = useState(0);
-  console.log(items[0].image)
 
   return (
     <>

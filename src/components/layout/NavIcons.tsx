@@ -64,7 +64,7 @@ const NavIcons = () => {
   }, [wixClient, getCart]);
 
   return (
-    <div className="flex items-center gap-4 xl:gap-6 relative">
+    <div className="flex items-center gap-2 sm:gap-4 xl:gap-6 relative">
       <Image
         src="/profile.png"
         alt=""
@@ -94,7 +94,7 @@ const NavIcons = () => {
         onClick={() => setIsCartOpen((prev) => !prev)}
       >
         <Image src="/cart.png" alt="" width={22} height={22} />
-        <div className="absolute -top-4 -right-4 w-6 h-6 bg-lama rounded-full text-white text-sm flex items-center justify-center">
+        <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-400 rounded-full text-white text-xs flex items-center justify-center">
           {counter}
         </div>
       </div>

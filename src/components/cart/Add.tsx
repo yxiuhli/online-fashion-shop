@@ -2,8 +2,9 @@
 
 import { useCartStore } from "@/hooks/useCartStore";
 import { useWixClient } from "@/hooks/useWixClient";
+import { checkFavorite, setFavorite } from "@/lib/action";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const Add = ({
   productId,
@@ -16,6 +17,26 @@ const Add = ({
 }) => {
   const [quantity, setQuantity] = useState(1);
 
+  const [isFavorite, setIsFavorite] = useState(false);
+  const wixClient = useWixClient();
+
+  useEffect(() => {
+    if (wixClient.auth.loggedIn()) {
+      try {
+        checkFavorite(productId).then((data) => {
+          setIsFavorite(data);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  }, []);
+
+  const toggleFavorite = async () => {
+    setFavorite(productId);
+    setIsFavorite(!isFavorite);
+  }
+
   // // TEMPORARY
   // const stock = 4;
 
@@ -27,8 +48,6 @@ const Add = ({
       setQuantity((prev) => prev + 1);
     }
   };
-
-  const wixClient = useWixClient();
 
   const { addItem, isLoading } = useCartStore();
 
@@ -72,10 +91,11 @@ const Add = ({
         </button>
 
         <Image
-          src="/heart.png"
+          src={isFavorite ? "/heart2.png" : "/heart.png"}
           alt=""
           width={20}
           height={20}
+          onClick={toggleFavorite}
           className="w-12 p-4 h-full rounded-lg bg-[#f2f0ea] hover:drop-shadow-lg"
         />
       </div>
