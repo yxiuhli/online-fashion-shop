@@ -3,6 +3,7 @@
 import { useCartStore } from "@/hooks/useCartStore";
 import { useWixClient } from "@/hooks/useWixClient";
 import { checkFavorite, setFavorite } from "@/lib/action";
+import { notification } from "antd";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
@@ -33,6 +34,10 @@ const Add = ({
   }, []);
 
   const toggleFavorite = async () => {
+    if (!wixClient.auth.loggedIn()) {
+      notification.warning({message: "Please login to use this feature"});
+      return;
+    }
     setFavorite(productId);
     setIsFavorite(!isFavorite);
   }

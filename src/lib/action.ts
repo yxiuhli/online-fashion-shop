@@ -72,7 +72,6 @@ export const setFavorite = async (productId: string) => {
     await wixClient.items.removeDataItem(res.items[0]._id!, {
       dataCollectionId: "Wishlist",
     });
-    return false;
   } else {
     await wixClient.items.insertDataItem({
       dataCollectionId: "Wishlist",
@@ -83,6 +82,5 @@ export const setFavorite = async (productId: string) => {
         },
       },
     });
-    return true;
   }
 };
