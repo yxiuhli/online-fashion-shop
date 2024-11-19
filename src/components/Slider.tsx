@@ -1,32 +1,99 @@
 "use client";
+
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import Image from "next/image";
+import { wixClientServer } from "@/lib/wixClientServer";
 
-// Định nghĩa kiểu dữ liệu cho mỗi slide
 type Slide = {
-  id: number;
+  id: string;
   title: string;
-  description?: string;
   img: string;
   url: string;
   bg: string;
+};
+
+const getFolders = async (): Promise<string | null> => {
+  try {
+    const wixClient = await wixClientServer();
+    if (!wixClient) throw new Error("Không thể tạo Wix Client.");
+
+    const response = await wixClient.folders.listFolders({
+      parentFolderId: "media-root",
+      paging: {
+        limit: 50,
+      },
+    });
+
+    if (!response.folders || response.folders.length === 0) {
+      console.warn("Không có thư mục nào trong Media Manager.");
+      return null;
+    }
+
+    const quangCaoFolder = response.folders.find(
+      (folder) => folder.displayName === "QuangCao"
+    );
+
+    return quangCaoFolder?._id || null;
+  } catch (error) {
+    console.error("Lỗi khi lấy danh sách thư mục:", error);
+    return null;
+  }
+};
+
+const getMediaFiles = async (): Promise<Slide[]> => {
+  try {
+    const folderId = await getFolders(); 
+
+    if (!folderId) {
+      throw new Error("Không tìm thấy thư mục 'QuangCao'");
+    }
+
+    const wixClient = await wixClientServer(); 
+
+    if (!wixClient) {
+      throw new Error("Không thể tạo Wix Client. Vui lòng kiểm tra cấu hình.");
+    }
+
+    const response = await wixClient.files.listFiles({
+      parentFolderId: folderId, 
+      paging: {
+        limit: 50, 
+      },
+    });
+
+    const imageFiles = response.files?.filter(
+      (file) =>
+        file.mediaType === "IMAGE" || file.url?.endsWith(".jpg") || file.url?.endsWith(".png")
+    );
+
+    if (!imageFiles || imageFiles.length === 0) {
+      console.warn("Không tìm thấy hình ảnh nào trong thư mục 'QuangCao'.");
+      return [];
+    }
+
+    return imageFiles.map((file) => ({
+      id: file._id || "unknown-id",
+      title: file.displayName || "Untitled",
+      img: file.url || "",
+      url: "/", 
+      bg: "bg-gray-800", 
+    }));
+  } catch (error) {
+    console.error("Error fetching media files:", error);
+    return [];
+  }
 };
 
 const Slider = () => {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [current, setCurrent] = useState(0);
 
-  // Gọi API để lấy dữ liệu slide
   useEffect(() => {
     const fetchSlides = async () => {
-      try {
-        const response = await axios.get("https://025f017a-81ec-41f8-86a2-c4cd3905a15a.mock.pstmn.io"); // Thay URL với URL của Mock Server
-        setSlides(response.data);
-      } catch (error) {
-        console.error("Error fetching slides:", error);
-      }
+      const mediaSlides = await getMediaFiles();
+      setSlides(mediaSlides);
     };
 
     fetchSlides();
@@ -48,7 +115,7 @@ const Slider = () => {
     return () => clearInterval(interval);
   }, [slides]);
 
-  if (slides.length === 0) return <p>Loading slides...</p>;
+  if (slides.length === 0) return <p>Loading ...</p>;
 
   return (
     <div className="relative h-[calc(100vh-80px)] overflow-hidden">
@@ -56,21 +123,22 @@ const Slider = () => {
         className="w-max h-full flex transition-all ease-in-out duration-1000"
         style={{ transform: `translateX(-${current * 100}vw)` }}
       >
-        {slides.map((slide) => (
+        {slides.map((slide, index) => (
           <div
-            className={`w-screen h-full ${slide.bg}`}
+            className={`relative w-screen h-full ${slide.bg}`}
             key={slide.id}
             style={{
-              backgroundImage: `url(${slide.img})`,
               backgroundSize: "cover",
-              backgroundPosition: "center"
+              backgroundPosition: "center",
             }}
           >
-            <div className={`h-full flex flex-col items-center justify-center text-center text-white bg-black bg-opacity-50` }>
-              <h2 className="text-xl lg:text-3xl 2xl:text-5xl">{slide.description}</h2>
-              <h1 className="text-5xl lg:text-6xl 2xl:text-8xl font-semibold text-white">
-                {slide.title}
-              </h1>
+            <Image
+              src={slide.img}
+              alt={slide.title}
+              layout="fill"
+            />
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white bg-black bg-opacity-50">
+              <h2 className="text-xl lg:text-3xl 2xl:text-5xl">{slide.title}</h2>
               <Link href={slide.url}>
                 <button className="rounded-md bg-white font-bold text-black py-3 px-4 mt-4">
                   SHOP NOW
@@ -86,20 +154,6 @@ const Slider = () => {
       </div>
       <div className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer z-10">
         <RiArrowRightSLine className="text-8xl text-gray-500" onClick={nextSlide} />
-      </div>
-
-      <div className="absolute m-auto left-1/2 bottom-8 flex gap-4">
-        {slides.map((slide, index) => (
-          <div
-            className={`w-3 h-3 rounded-full ring-1 ring-gray-600 cursor-pointer flex items-center justify-center ${
-              current === index ? "scale-150" : ""
-            }`}
-            key={slide.id}
-            onClick={() => setCurrent(index)}
-          >
-            {current === index && <div className="w-[6px] h-[6px] bg-gray-600 rounded-full"></div>}
-          </div>
-        ))}
       </div>
     </div>
   );
