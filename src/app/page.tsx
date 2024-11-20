@@ -4,9 +4,9 @@
 import ProductList from "@/components/ProductList";
 import Skeleton from "@/components/Skeleton";
 import Slider from "@/components/Slider";
+import { wixClientAdmin } from "@/lib/wixClientAdmin";
 // import { WixClientContext } from "@/context/wixContext";
 // import { useWixClient } from "@/hooks/useWixClient";
-import { wixClientServer } from "@/lib/wixClientServer";
 import { Suspense, useContext, useEffect } from "react";
 
 const HomePage = async () => {
@@ -28,15 +28,15 @@ const HomePage = async () => {
 
   // TEST (FETCHING ON THE SERVER COMPONENT)
 
-  // const wixClient = await wixClientServer();
+  const wixClient = await wixClientAdmin();
 
-  // const res = await wixClient.products.queryProducts().find();
+  const response = await wixClient.files.listFiles({parentFolderId: "65b9468d82a24dc9998578307cac3333"});
 
-  // console.log(res);
+  const banners = response.files
 
   return (
     <div className="">
-      <Slider />
+      <Slider files={banners!}/>
       <div className="mt-12 px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64">
         <h1 className="text-2xl">Featured Products</h1>
         <Suspense fallback={<Skeleton />}>
