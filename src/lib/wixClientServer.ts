@@ -1,13 +1,17 @@
 import { OAuthStrategy, createClient } from "@wix/sdk";
 import { collections, products } from "@wix/stores";
-import { orders } from "@wix/ecom";
-import Cookies from "js-cookie";
-import { members } from "@wix/members";
-import { files, folders } from "@wix/media";
+import { orders, orderTransactions } from "@wix/ecom";
+import { cookies } from "next/headers";
+import { members } from '@wix/members';
 import { items } from "@wix/data";
 
 export const wixClientServer = async () => {
-  const refreshToken = Cookies.get("refreshToken");
+  let refreshToken;
+
+  try {
+    const cookieStore = cookies();
+    refreshToken = JSON.parse(cookieStore.get("refreshToken")?.value || "{}");
+  } catch (e) {}
 
   const wixClient = createClient({
     modules: {
@@ -15,14 +19,13 @@ export const wixClientServer = async () => {
       collections,
       orders,
       members,
-      files,
-      folders,
+      orderTransactions,
       items
     },
     auth: OAuthStrategy({
       clientId: process.env.NEXT_PUBLIC_WIX_CLIENT_ID!,
       tokens: {
-        refreshToken: refreshToken ? JSON.parse(refreshToken) : undefined,
+        refreshToken,
         accessToken: { value: "", expiresAt: 0 },
       },
     }),

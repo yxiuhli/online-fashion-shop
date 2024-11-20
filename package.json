@@ -11,7 +11,7 @@
   "dependencies": {
     "@wix/data": "^1.0.168",
     "@wix/ecom": "^1.0.741",
-    "@wix/media": "^1.0.129",
+    "@wix/media": "^1.0.131",
     "@wix/members": "^1.0.102",
     "@wix/sdk": "^1.14.2",
     "@wix/stores": "^1.0.221",
