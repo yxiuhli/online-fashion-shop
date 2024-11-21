@@ -4,7 +4,6 @@ import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
-import { wixClientAdmin } from "@/lib/wixClientAdmin";
 
 type Slide = {
   id: string;
@@ -14,89 +13,33 @@ type Slide = {
   bg: string;
 };
 
-const getFolders = async (): Promise<string | null> => {
-  try {
-    const response = await wixClientApiKey.folders.listFolders({
-      parentFolderId: "media-root",
-      paging: {
-        limit: 50,
-      },
-    });
-
-    console.log("Danh sách thư mục:", response);
-
-    // Tìm thư mục có tên 'QuangCao'
-    const quangCaoFolder = response.folders?.find(
-      (folder) => folder.displayName === "QuangCao"
-    );
-
-    // Trả về ID của thư mục nếu tìm thấy, hoặc null nếu không có
-    return quangCaoFolder?._id || null;
-  } catch (error) {
-    console.error("Lỗi khi lấy danh sách thư mục:", error);
-    return null;
-  }
-};
-
-const getMediaFiles = async (): Promise<Slide[]> => {
-  try {
-    const folderId = await getFolders(); // Lấy folder ID từ hàm getFolders()
-
-    if (!folderId) {
-      throw new Error("Không tìm thấy thư mục 'QuangCao'.");
-    }
-
-    // Không cần await nếu `wixClientApiKey` là đối tượng
-    const wixClient = wixClientApiKey;
-    if (!wixClient) {
-      throw new Error("Không thể tạo Wix Client.");
-    }
-
-    // Gọi API để lấy danh sách file
-    const response = await wixClient.files.listFiles({
-      parentFolderId: folderId, // Dùng folderId lấy được từ getFolders
-      paging: {
-        limit: 50,
-      },
-    });
-
-    // Lọc danh sách file ảnh
-    const imageFiles = response.files?.filter(
-      (file) =>
-        file.mediaType === "IMAGE" ||
-        file.url?.endsWith(".jpg") ||
-        file.url?.endsWith(".png")
-    );
-
-    // Map kết quả thành danh sách Slide
-    return (
-      imageFiles?.map((file) => ({
-        id: file._id || "unknown-id",
-        title: file.displayName || "Untitled",
-        img: file.url || "",
-        url: "/", // URL tuỳ chỉnh
-        bg: "bg-gray-800", // Màu nền mặc định
-      })) || []
-    );
-  } catch (error) {
-    console.error("Error fetching media files:", error); // Log lỗi chi tiết
-    return []; // Trả về danh sách rỗng trong trường hợp lỗi
-  }
-};
-
-const Slider = ({ files }: { files: any[]}) => {
+const Slider = ({ files }: { files: any[] }) => {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [current, setCurrent] = useState(0);
 
-  console.log(files)
+  // Chuyển đổi dữ liệu `files` thành dữ liệu `slides`
+  useEffect(() => {
+    const mappedSlides = files.map((file) => ({
+      id: file._id || "unknown-id",
+      title: file.displayName || "Untitled",
+      img: file.url || "",
+      url: "/", // URL mặc định
+      bg: "bg-gray-800", // Màu nền mặc định
+    }));
+    setSlides(mappedSlides);
+  }, [files]);
+
+  // Hàm chuyển slide kế tiếp
   const nextSlide = () => {
     setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
 
+  // Hàm quay về slide trước
   const prevSlide = () => {
     setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
 
+  // Tự động chuyển slide mỗi 5 giây
   useEffect(() => {
     const interval = setInterval(() => {
       nextSlide();
@@ -105,6 +48,7 @@ const Slider = ({ files }: { files: any[]}) => {
     return () => clearInterval(interval);
   }, [slides]);
 
+  // Hiển thị Loading nếu chưa có slide
   if (slides.length === 0) return <p>Loading ...</p>;
 
   return (
@@ -122,11 +66,14 @@ const Slider = ({ files }: { files: any[]}) => {
               backgroundPosition: "center",
             }}
           >
-            <Image src={slide.img} alt={slide.title} layout="fill" />
+            <Image
+              src={slide.img}
+              alt={slide.title}
+              layout="fill"
+              objectFit="cover"
+            />
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white bg-black bg-opacity-50">
-              <h2 className="text-xl lg:text-3xl 2xl:text-5xl">
-                {slide.title}
-              </h2>
+              <h2 className="text-xl lg:text-3xl 2xl:text-5xl">{slide.title}</h2>
               <Link href={slide.url}>
                 <button className="rounded-md bg-white font-bold text-black py-3 px-4 mt-4">
                   SHOP NOW
