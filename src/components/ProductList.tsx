@@ -3,7 +3,7 @@ import { products } from '@wix/stores';
 import Image from 'next/image';
 import Link from 'next/link';
 import DOMPurify from 'isomorphic-dompurify';
-// import Pagination from "./Pagination";
+import Pagination from './Pagination';
 
 const PRODUCT_PER_PAGE = 8;
 
@@ -121,13 +121,13 @@ const ProductList = async ({
           </button>
         </Link>
       ))}
-      {/* {searchParams?.cat || searchParams?.name ? (
+      {searchParams?.cat || searchParams?.name ? (
         <Pagination
           currentPage={res.currentPage || 0}
           hasPrev={res.hasPrev()}
           hasNext={res.hasNext()}
         />
-      ) : null} */}
+      ) : null}
     </div>
   );
 };
