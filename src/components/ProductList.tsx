@@ -18,7 +18,7 @@ const ProductList = async ({
 }) => {
   const wixClient = await wixClientServer();
 
-  const productQuery = wixClient.products
+  let productQuery = wixClient.products
     .queryProducts()
     .startsWith('name', searchParams?.name || '')
     .eq('collectionIds', categoryId)
@@ -27,35 +27,23 @@ const ProductList = async ({
     .limit(limit || PRODUCT_PER_PAGE)
     .skip(searchParams?.page ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE) : 0);
 
-  if (searchParams?.sort == 'asc_lastUpdated') {
-    productQuery.ascending('lastUpdated');
-  } else if (searchParams?.sort == 'desc_lastUpdated') {
-    productQuery.descending('lastUpdated');
+  if (searchParams?.sort) {
+    if (searchParams.sort === 'desc_lastUpdated') {
+      productQuery = productQuery.ascending('lastUpdated');
+    } else if (searchParams.sort === 'asc_lastUpdated') {
+      productQuery = productQuery.descending('lastUpdated');
+    } else if (searchParams.sort === 'asc_price') {
+      productQuery = productQuery.ascending('price');
+    } else if (searchParams.sort === 'desc_price') {
+      productQuery = productQuery.descending('price');
+    }
   }
 
   const res = await productQuery.find();
 
-  const sortedProducts = res.items.sort((a: any, b: any) => {
-    const priceA = a.priceData.price;
-    const priceB = b.priceData.price;
-    const dateA = new Date(a.lastUpdated);
-    const dateB = new Date(b.lastUpdated);
-
-    if (searchParams?.sort === 'asc_price') {
-      return priceA - priceB;
-    } else if (searchParams?.sort === 'desc_price') {
-      return priceB - priceA;
-    } else if (searchParams?.sort == 'asc_lastUpdated') {
-      return dateB.getTime() - dateA.getTime();
-    } else if (searchParams?.sort == 'desc_lastUpdated') {
-      return dateA.getTime() - dateB.getTime();
-    }
-    return 0;
-  });
-
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
-      {sortedProducts.map((product: products.Product) => (
+      {res.items.map((product: products.Product) => (
         <Link
           href={'/' + product.slug}
           className="w-full flex flex-col gap-4 sm:w-[45%] lg:w-[22%]"
@@ -72,7 +60,7 @@ const ProductList = async ({
               alt=""
               fill
               sizes="25vw"
-              className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity easy duration-500"
+              className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity ease duration-500"
             />
             {product.media?.items && (
               <Image
