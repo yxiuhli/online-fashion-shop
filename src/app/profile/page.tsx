@@ -26,11 +26,11 @@ const ProfilePage = async () => {
     });
 
     return (
-      <div className="flex flex-col md:flex-row gap-24 items-start px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 pt-5">
-        <div className="w-full md:w-1/2 p-4">
+      <div className="flex flex-col gap-24 items-start px-4 md:px-8 lg:px-16 xl:px-32 2xl:px-64 pt-5">
+        <div className="w-full p-4">
           <ProfileForm userData={user.member} />
         </div>
-        <div className="w-full md:w-1/2 p-4">
+        <div className="w-full p-4">
           <h1 className="text-2xl">Orders</h1>
           <div className="mt-12 flex flex-col">
             <div className="flex justify-between px-2 py-2 font-bold border-b">
