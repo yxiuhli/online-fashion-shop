@@ -92,7 +92,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
 
         <div className="flex flex-col gap-4 md:w-1/2">
           <label htmlFor="firstName" className="text-sm text-gray-700">
-            Username
+            Full Name
           </label>
           <input
             id="firstName"
