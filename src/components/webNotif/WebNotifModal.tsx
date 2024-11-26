@@ -36,7 +36,7 @@ const WebNotifModal = ({notifs,setNotifs,unreadCounter}) => {
           {/* BOTTOM */}
           <div className="">
             <div className="flex items-center justify-between font-semibold mb-2">
-              <span className="">Notification(s)</span>
+              <span className="">Notifications</span>
         </div>
         <div className="border-t border-b border-gray-400 divide-y divide-gray-400">
           {notifs.map((notif,index) => (

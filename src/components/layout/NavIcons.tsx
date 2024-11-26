@@ -108,11 +108,11 @@ const NavIcons = () => {
         onClick={() => setIsNotifOpen((prev) => !prev)}
       >
         <Image src="/notification.png" alt="Notification" width={22} height={22} className="cursor-pointer" />
-        {(unreadCounter>0)&&<div className="absolute -top-2 -right-2 w-4 h-4 bg-red-400 rounded-full text-white text-xs flex items-center justify-center">
+        {isLoggedIn&&(unreadCounter>0)&&<div className="absolute -top-2 -right-2 w-4 h-4 bg-red-400 rounded-full text-white text-xs flex items-center justify-center">
           {unreadCounter}
         </div>}
       </div>
-      {isNotifOpen && <WebNotifModal notifs={notifs} setNotifs={ setNotifs} unreadCounter={unreadCounter} /> }
+      {isLoggedIn&&isNotifOpen && <WebNotifModal notifs={notifs} setNotifs={ setNotifs} unreadCounter={unreadCounter} /> }
       <div
         className="relative cursor-pointer"
         onClick={() => setIsCartOpen((prev) => !prev)}
