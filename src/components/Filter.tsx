@@ -51,8 +51,9 @@ const Filter = () => {
           id=""
           className="py-2 px-4 rounded-2xl text-xs font-medium bg-white ring-1 ring-gray-400"
           onChange={handleFilterChange}
+          defaultValue=""
         >
-          <option disabled selected>
+          <option disabled value="">
             Sort By
           </option>
           <option value="asc_price">Price (low to high)</option>

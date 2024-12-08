@@ -65,82 +65,68 @@ const ProfileForm: React.FC<ProfileFormProps> = ({ userData }) => {
       )}
       <h1 className="text-2xl">Profile</h1>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4 mt-8">
+      <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-4 mt-8">
         <input type="text" hidden name="id" defaultValue={userData.contactId || ''} />
-        <div className="flex flex-col items-center justify-center relative">
+        <div className="flex flex-col items-center justify-center relative md:w-1/2">
           {imagePreview && (
-            <div className="mb-4 relative">
+            <div className="mb-4 relative flex flex-col items-center">
               <CldImage
                 src={imagePreview}
-                alt=""
-                width={120}
-                height={120}
+                alt="Avatar"
+                width={200}
+                height={200}
+                quality="auto"
+                crop="fill"
                 className="rounded-full border-2 border-gray-300"
               />
-              <CldUploadButton uploadPreset="ml_default" onSuccess={handleUpload} className="mt-4">
-                Upload Avatar
+              <CldUploadButton
+                uploadPreset="ml_default"
+                onSuccess={handleUpload}
+                className="bg-red-500 text-white py-2 px-4 rounded-full hover:bg-red-600 transition-all"
+              >
+                +
               </CldUploadButton>
             </div>
           )}
         </div>
 
-        <label htmlFor="username" className="text-sm text-gray-700">
-          Username
-        </label>
-        <input
-          id="username"
-          type="text"
-          name="username"
-          defaultValue={userData.profile?.nickname || 'noname'}
-          className="ring-1 ring-gray-300 rounded-md p-2"
-        />
+        <div className="flex flex-col gap-4 md:w-1/2">
+          <label htmlFor="firstName" className="text-sm text-gray-700">
+            Full Name
+          </label>
+          <input
+            id="firstName"
+            type="text"
+            name="firstName"
+            defaultValue={userData.contact?.firstName || 'noname'}
+            className="ring-1 ring-gray-300 rounded-md p-2"
+          />
 
-        <label htmlFor="firstName" className="text-sm text-gray-700">
-          First Name
-        </label>
-        <input
-          id="firstName"
-          type="text"
-          name="firstName"
-          defaultValue={userData.contact?.firstName || 'noname'}
-          className="ring-1 ring-gray-300 rounded-md p-2"
-        />
+          <label htmlFor="address" className="text-sm text-gray-700">
+            Address
+          </label>
+          <input
+            id="address"
+            type="text"
+            name="address"
+            defaultValue={userData.contact?.addresses?.[0]?.city || 'noaddress'}
+            className="ring-1 ring-gray-300 rounded-md p-2"
+          />
 
-        <label htmlFor="lastName" className="text-sm text-gray-700">
-          Last Name
-        </label>
-        <input
-          id="lastName"
-          type="text"
-          name="lastName"
-          defaultValue={userData.contact?.lastName || 'noname'}
-          className="ring-1 ring-gray-300 rounded-md p-2"
-        />
+          <label htmlFor="email" className="text-sm text-gray-700">
+            Email
+          </label>
+          <input
+            id="email"
+            type="text"
+            name="email"
+            defaultValue={userData.loginEmail || 'noemail'}
+            className="ring-1 ring-gray-300 rounded-md p-2"
+            readOnly
+          />
 
-        <label htmlFor="address" className="text-sm text-gray-700">
-          Address
-        </label>
-        <input
-          id="address"
-          type="text"
-          name="address"
-          defaultValue={userData.contact?.addresses?.[0]?.city || 'noaddress'}
-          className="ring-1 ring-gray-300 rounded-md p-2"
-        />
-
-        <label htmlFor="email" className="text-sm text-gray-700">
-          Email
-        </label>
-        <input
-          id="email"
-          type="text"
-          name="email"
-          defaultValue={userData.loginEmail || 'noemail'}
-          className="ring-1 ring-gray-300 rounded-md p-2"
-          readOnly
-        />
-
-        <UpdateButton />
+          <UpdateButton />
+        </div>
       </form>
     </div>
   );

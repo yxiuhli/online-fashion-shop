@@ -3,7 +3,7 @@ import { products } from '@wix/stores';
 import Image from 'next/image';
 import Link from 'next/link';
 import DOMPurify from 'isomorphic-dompurify';
-// import Pagination from "./Pagination";
+import Pagination from './Pagination';
 
 const PRODUCT_PER_PAGE = 8;
 
@@ -18,7 +18,7 @@ const ProductList = async ({
 }) => {
   const wixClient = await wixClientServer();
 
-  const productQuery = wixClient.products
+  let productQuery = wixClient.products
     .queryProducts()
     .startsWith('name', searchParams?.name || '')
     .eq('collectionIds', categoryId)
@@ -27,47 +27,40 @@ const ProductList = async ({
     .limit(limit || PRODUCT_PER_PAGE)
     .skip(searchParams?.page ? parseInt(searchParams.page) * (limit || PRODUCT_PER_PAGE) : 0);
 
-  if (searchParams?.sort == 'asc_lastUpdated') {
-    productQuery.ascending('lastUpdated');
-  } else if (searchParams?.sort == 'desc_lastUpdated') {
-    productQuery.descending('lastUpdated');
+  if (searchParams?.sort) {
+    if (searchParams.sort === 'desc_lastUpdated') {
+      productQuery = productQuery.ascending('lastUpdated');
+    } else if (searchParams.sort === 'asc_lastUpdated') {
+      productQuery = productQuery.descending('lastUpdated');
+    } else if (searchParams.sort === 'asc_price') {
+      productQuery = productQuery.ascending('price');
+    } else if (searchParams.sort === 'desc_price') {
+      productQuery = productQuery.descending('price');
+    }
   }
 
   const res = await productQuery.find();
 
-  const sortedProducts = res.items.sort((a: any, b: any) => {
-    const priceA = a.priceData.price;
-    const priceB = b.priceData.price;
-    const dateA = new Date(a.lastUpdated);
-    const dateB = new Date(b.lastUpdated);
-
-    if (searchParams?.sort === 'asc_price') {
-      return priceA - priceB; // Sắp xếp giá tăng dần
-    } else if (searchParams?.sort === 'desc_price') {
-      return priceB - priceA; // Sắp xếp giá giảm dần
-    } else if (searchParams?.sort == 'asc_lastUpdated') {
-      return dateA.getTime() - dateB.getTime();
-    } else if (searchParams?.sort == 'desc_lastUpdated') {
-      return dateB.getTime() - dateA.getTime();
-    }
-    return 0; // Không sắp xếp nếu không có sort
-  });
-
   return (
     <div className="mt-12 flex gap-x-8 gap-y-16 justify-between flex-wrap">
-      {sortedProducts.map((product: products.Product) => (
+      {res.items.map((product: products.Product) => (
         <Link
           href={'/' + product.slug}
           className="w-full flex flex-col gap-4 sm:w-[45%] lg:w-[22%]"
           key={product._id}
         >
           <div className="relative w-full h-80">
+            {product.discount?.value && product.discount.value > 0 && (
+              <div className="absolute top-2 left-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded z-20">
+                -{product.discount.value}%
+              </div>
+            )}
             <Image
               src={product.media?.mainMedia?.image?.url || '/product.png'}
               alt=""
               fill
               sizes="25vw"
-              className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity easy duration-500"
+              className="absolute object-cover rounded-md z-10 hover:opacity-0 transition-opacity ease duration-500"
             />
             {product.media?.items && (
               <Image
@@ -81,8 +74,24 @@ const ProductList = async ({
           </div>
           <div className="flex justify-between">
             <span className="font-medium">{product.name}</span>
-            <span className="font-semibold">${product.price?.price}</span>
+            <div className="flex items-center">
+              {product.priceData?.discountedPrice &&
+              product.priceData.price &&
+              product.priceData?.discountedPrice < product.priceData?.price ? (
+                <>
+                  <span className="font-semibold line-through mr-2">
+                    ${product.priceData?.price}
+                  </span>
+                  <span className="font-semibold text-red-500">
+                    ${product.priceData?.discountedPrice}
+                  </span>
+                </>
+              ) : (
+                <span className="font-semibold">${product.priceData?.price}</span>
+              )}
+            </div>
           </div>
+
           {product.additionalInfoSections && (
             <div
               className="text-sm text-gray-500"
@@ -100,13 +109,13 @@ const ProductList = async ({
           </button>
         </Link>
       ))}
-      {/* {searchParams?.cat || searchParams?.name ? (
+      {searchParams?.cat || searchParams?.name ? (
         <Pagination
           currentPage={res.currentPage || 0}
           hasPrev={res.hasPrev()}
           hasNext={res.hasNext()}
         />
-      ) : null} */}
+      ) : null}
     </div>
   );
 };
