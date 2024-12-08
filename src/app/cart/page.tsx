@@ -11,25 +11,26 @@ const CartPage = () => {
 
   const handleCheckout = async () => {
     try {
-      const checkout =
-        await wixClient.currentCart.createCheckoutFromCurrentCart({
-          channelType: currentCart.ChannelType.WEB,
-        });
+      console.log("Bắt đầu tạo phiên thanh toán...");
+      const checkout = await wixClient.currentCart.createCheckoutFromCurrentCart({
+        channelType: currentCart.ChannelType.WEB,
+      });
+      console.log("Phiên thanh toán được tạo thành công:", checkout);
 
-      const { redirectSession } =
-        await wixClient.redirects.createRedirectSession({
-          ecomCheckout: { checkoutId: checkout.checkoutId },
-          callbacks: {
-            postFlowUrl: window.location.origin,
-            thankYouPageUrl: `${window.location.origin}/success`,
-          },
-        });
+      const { redirectSession } = await wixClient.redirects.createRedirectSession({
+        ecomCheckout: { checkoutId: checkout.checkoutId },
+        callbacks: {
+          postFlowUrl: window.location.origin,
+          thankYouPageUrl: `${window.location.origin}/success`,
+        },
+      });
 
       if (redirectSession?.fullUrl) {
+        console.log("Chuyển hướng đến URL:", redirectSession.fullUrl);
         window.location.href = redirectSession.fullUrl;
       }
     } catch (err) {
-      console.log(err);
+      console.error("Lỗi khi tạo phiên thanh toán:", err);
     }
   };
   return (
