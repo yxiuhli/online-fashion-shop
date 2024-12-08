@@ -88,7 +88,7 @@ const Slider = ({ files }: { files: any[]}) => {
   const [slides, setSlides] = useState<Slide[]>([]);
   const [current, setCurrent] = useState(0);
 
-  console.log(files)
+  console.log("baners", files)
   const nextSlide = () => {
     setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
