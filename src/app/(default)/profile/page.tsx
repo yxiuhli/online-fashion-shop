@@ -1,4 +1,5 @@
 import ProfileForm from '@/components/ProfileForm';
+import { useUserRedirect } from '@/hooks/useUserRedirect';
 import { wixClientServer } from '@/lib/wixClientServer';
 import { members } from '@wix/members';
 import Link from 'next/link';
