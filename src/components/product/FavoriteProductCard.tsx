@@ -1,26 +1,12 @@
 import { Card } from "antd";
-import Add from "@/components/cart/Add";
-
-import CustomizeProducts from "@/components/CustomizeProducts";
 import RatingInfo from "@/components/feedback/RatingInfo";
 import Image from "next/image";
+import FavoriteButton from "../FavoriteButton";
 
-const PinnedProduct = ({
-  display,
-  product,
-}: {
-  display: Boolean;
-  product: any;
-}) => {
+const FavoriteProductCard = ({ product }: { product: any }) => {
   return (
     <>
-      <Card
-        className={`transition-all duration-300 ${
-          display
-            ? "opacity-100 -translate-y-0"
-            : "opacity-0 -translate-y-0 pointer-events-none"
-        } sticky top-16 w-96 drop-shadow-md`}
-      >
+      <Card className="w-[21rem] drop-shadow-md">
         <div className="w-full flex flex-col gap-2 font-[Monaco]">
           <div className="flex gap-6">
             <div className="h-32">
@@ -53,23 +39,22 @@ const PinnedProduct = ({
               )}
             </div>
           </div>
-          {product.variants && product.productOptions ? (
-            <CustomizeProducts
-              productId={product._id!}
-              variants={product.variants}
-              productOptions={product.productOptions}
-            />
-          ) : (
-            <Add
-              productId={product._id!}
-              variantId="00000000-0000-0000-0000-000000000000"
-              stockNumber={product.stock?.quantity || 0}
-            />
-          )}
+          <div className=" flex-col flex gap-2">
+            <h2 className="font-semibold">Description</h2>
+            <p className="min-h-[136px] overflow-hidden line-clamp-6">
+              {product.description}
+            </p>
+          </div>
+          <div className="flex gap-4">
+            <button className="w-full rounded-lg ring-1 ring-dark text-white bg-stone-900 py-2 px-4 hover:drop-shadow-lg">
+              View details
+            </button>
+            <FavoriteButton productId={product._id}/>
+          </div>
         </div>
       </Card>
     </>
   );
 };
 
-export default PinnedProduct;
+export default FavoriteProductCard;
