@@ -1,16 +1,13 @@
 "use client";
 
 import { RiArrowLeftSLine, RiArrowRightSLine } from "react-icons/ri";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 
 type Slide = {
   id: string;
-  title: string;
   img: string;
   url: string;
-  bg: string;
 };
 
 const Slider = ({ files }: { files: any[] }) => {
@@ -21,10 +18,8 @@ const Slider = ({ files }: { files: any[] }) => {
   useEffect(() => {
     const mappedSlides = files.map((file) => ({
       id: file._id || "unknown-id",
-      title: file.displayName || "Untitled",
       img: file.url || "",
       url: "/", // URL mặc định
-      bg: "bg-gray-800", // Màu nền mặc định
     }));
     setSlides(mappedSlides);
   }, [files]);
@@ -59,7 +54,7 @@ const Slider = ({ files }: { files: any[] }) => {
       >
         {slides.map((slide, index) => (
           <div
-            className={`relative w-screen h-full ${slide.bg}`}
+            className="relative w-screen h-full"
             key={slide.id}
             style={{
               backgroundSize: "cover",
@@ -68,18 +63,10 @@ const Slider = ({ files }: { files: any[] }) => {
           >
             <Image
               src={slide.img}
-              alt={slide.title}
+              alt={`Slide ${index + 1}`}
               layout="fill"
               objectFit="cover"
             />
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white bg-black bg-opacity-50">
-              <h2 className="text-xl lg:text-3xl 2xl:text-5xl">{slide.title}</h2>
-              <Link href={slide.url}>
-                <button className="rounded-md bg-white font-bold text-black py-3 px-4 mt-4">
-                  SHOP NOW
-                </button>
-              </Link>
-            </div>
           </div>
         ))}
       </div>
