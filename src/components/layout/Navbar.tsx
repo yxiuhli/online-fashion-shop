@@ -64,7 +64,7 @@ const Navbar = () => {
         <div className="hidden sm:flex flex-col justify-center gap-8 h-full">
           {/* LEFT */}
           <div className="flex items-center justify-between gap-12">
-            <Link href="/loginpage" className="flex items-center gap-3">
+            <Link href="/" className="flex items-center gap-3">
               <Image src="/logo.png" alt="" width={24} height={24} />
               <div className="text-3xl tracking-wide font-bold font-[Garamond]">
                 BRAND

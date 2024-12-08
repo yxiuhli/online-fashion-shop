@@ -11,30 +11,29 @@ import { useCartStore } from "@/hooks/useCartStore";
 import CartModal from "../cart/CartModal";
 import WebNotifModal from "../webNotif/WebNotifModal";
 
-
 const NavIcons = () => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isNotifOpen, setIsNotifOpen] = useState(false);
-// begin dummy data
-  const [notifs,setNotifs] = useState([
+  // begin dummy data
+  const [notifs, setNotifs] = useState([
     {
-      readStatus:false,
+      readStatus: false,
       message: "Your order #983894 has been approved.",
       orderStatus: "approved",
-      id:"983894_approved"
+      id: "983894_approved",
     },
     {
       readStatus: true,
       message: "Your order #983894 is pending.",
       orderStatus: "pending",
-      id:"983894_pending"
-    }
-  ])
+      id: "983894_pending",
+    },
+  ]);
 
-  const unreadCounter = notifs.filter(item=>!item.readStatus).length;
-// end dummy data
+  const unreadCounter = notifs.filter((item) => !item.readStatus).length;
+  // end dummy data
 
   const router = useRouter();
   const pathName = usePathname();
@@ -108,20 +107,37 @@ const NavIcons = () => {
         className="relative cursor-pointer"
         onClick={() => setIsNotifOpen((prev) => !prev)}
       >
-        <Image src="/notification.png" alt="Notification" width={22} height={22} className="cursor-pointer" />
-        {isLoggedIn&&(unreadCounter>0)&&<div className="absolute -top-2 -right-2 w-4 h-4 bg-red-400 rounded-full text-white text-xs flex items-center justify-center">
-          {unreadCounter}
-        </div>}
+        <Image
+          src="/notification.png"
+          alt="Notification"
+          width={22}
+          height={22}
+          className="cursor-pointer"
+        />
+        {isLoggedIn && unreadCounter > 0 && (
+          <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-400 rounded-full text-white text-xs flex items-center justify-center">
+            {unreadCounter}
+          </div>
+        )}
       </div>
-      {isLoggedIn&&isNotifOpen && <WebNotifModal notifs={notifs} setNotifs={ setNotifs} unreadCounter={unreadCounter} /> }
+      {isLoggedIn && isNotifOpen && (
+        <WebNotifModal
+          notifs={notifs}
+          setNotifs={setNotifs}
+          unreadCounter={unreadCounter}
+        />
+      )}
       <div
         className="relative cursor-pointer"
         onClick={() => setIsCartOpen((prev) => !prev)}
       >
         <Image src="/cart.png" alt="" width={22} height={22} />
-        <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-400 rounded-full text-white text-xs flex items-center justify-center">
-          {counter}
-        </div>
+
+        {counter > 0 && (
+          <div className="absolute -top-2 -right-2 w-4 h-4 bg-red-400 rounded-full text-white text-xs flex items-center justify-center">
+            {counter}
+          </div>
+        )}
       </div>
       {isCartOpen && <CartModal />}
     </div>
