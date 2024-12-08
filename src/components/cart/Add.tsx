@@ -6,6 +6,7 @@ import { checkFavorite, setFavorite } from "@/lib/action";
 import { notification } from "antd";
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import FavoriteButton from "../FavoriteButton";
 
 const Add = ({
   productId,
@@ -17,34 +18,9 @@ const Add = ({
   stockNumber: number;
 }) => {
   const [quantity, setQuantity] = useState(1);
-
-  const [isFavorite, setIsFavorite] = useState(false);
   const wixClient = useWixClient();
 
-  useEffect(() => {
-    if (wixClient.auth.loggedIn()) {
-      try {
-        checkFavorite(productId).then((data) => {
-          setIsFavorite(data);
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  }, []);
-
-  const toggleFavorite = async () => {
-    if (!wixClient.auth.loggedIn()) {
-      notification.warning({message: "Please login to use this feature"});
-      return;
-    }
-    setFavorite(productId);
-    setIsFavorite(!isFavorite);
-  }
-
-  // // TEMPORARY
-  // const stock = 4;
-
+  
   const handleQuantity = (type: "i" | "d") => {
     if (type === "d" && quantity > 1) {
       setQuantity((prev) => prev - 1);
@@ -95,14 +71,7 @@ const Add = ({
           Add to cart
         </button>
 
-        <Image
-          src={isFavorite ? "/heart2.png" : "/heart.png"}
-          alt=""
-          width={20}
-          height={20}
-          onClick={toggleFavorite}
-          className="w-12 p-4 h-full rounded-lg bg-[#f2f0ea] hover:drop-shadow-lg"
-        />
+        <FavoriteButton productId={productId} />
       </div>
       <div className="flex gap-2">
         <Image src="/delivery.png" alt="" width={20} height={12} />

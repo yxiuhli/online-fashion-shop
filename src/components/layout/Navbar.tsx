@@ -2,7 +2,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import { title } from "process";
 import Menu from "./Menu";
 import SearchBar from "./SearchBar";
@@ -13,7 +13,10 @@ import { Divider } from "antd";
 const NavIcons = dynamic(() => import("./NavIcons"), { ssr: false });
 
 const Navbar = () => {
-  const pathName = usePathname();
+  const path = usePathname();
+  const searchParams = useSearchParams();
+  const pathName =  searchParams.toString() != "" ? `${path}?${searchParams.toString()}` :path
+
   const links = [
     {
       title: "Home",
