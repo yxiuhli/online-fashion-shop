@@ -67,7 +67,7 @@ const Navbar = () => {
             <Link href="/" className="flex items-center gap-3">
               <Image src="/logo.png" alt="" width={24} height={24} />
               <div className="text-3xl tracking-wide font-bold font-[Garamond]">
-                BRAND
+                7-FASHION
               </div>
             </Link>
             <SearchBar />

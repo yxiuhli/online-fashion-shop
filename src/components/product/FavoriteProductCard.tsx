@@ -1,3 +1,4 @@
+"use client"
 import { Card } from "antd";
 import RatingInfo from "@/components/feedback/RatingInfo";
 import Image from "next/image";
@@ -46,7 +47,9 @@ const FavoriteProductCard = ({ product }: { product: any }) => {
             </p>
           </div>
           <div className="flex gap-4">
-            <button className="w-full rounded-lg ring-1 ring-dark text-white bg-stone-900 py-2 px-4 hover:drop-shadow-lg">
+            <button 
+            onClick={() => window.location.href = `/${product.slug}`}
+            className="w-full rounded-lg ring-1 ring-dark text-white bg-stone-900 py-2 px-4 hover:drop-shadow-lg">
               View details
             </button>
             <FavoriteButton productId={product._id}/>
