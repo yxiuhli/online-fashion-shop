@@ -9,14 +9,14 @@ import { useRouter } from "next/navigation";
 import WebNotifModalItem from "./WebNotifItem";
 import { useState } from "react";
 
-const WebNotifModal = ({ notifs, setNotifs, unreadCounter }) => {
+const WebNotifModal = ({ notifs, setNotifs, unreadCounter } : { notifs: any, setNotifs: any, unreadCounter: any}) => {
   // TEMPORARY
   // const cartItems = true;
 
   // begin dummy data
   const toggleReadStatus = (id: string) => {
-    setNotifs((prevNotifs) =>
-      prevNotifs.map((notif) =>
+    setNotifs((prevNotifs :any) =>
+      prevNotifs.map((notif : any) =>
         notif.id === id ? { ...notif, readStatus: true } : notif
       )
     );
@@ -36,7 +36,7 @@ const WebNotifModal = ({ notifs, setNotifs, unreadCounter }) => {
           <span className="">Notifications</span>
         </div>
         <div className="border-t border-b border-gray-400 divide-y divide-gray-400">
-          {notifs.map((notif, index) => (
+          {notifs.map((notif :any, index:any) => (
             <WebNotifModalItem
               key={index}
               notif={notif}

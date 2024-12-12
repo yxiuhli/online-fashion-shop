@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const WebNotifModalItem = ({ notif,toggleReadStatus }) => {
+const WebNotifModalItem = ({ notif, toggleReadStatus }: { notif: any, toggleReadStatus: (id: string) => void }) => {
   const [isNotifOpen, setIsNotifOpen] = useState(false);
 
   
