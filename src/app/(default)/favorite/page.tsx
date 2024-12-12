@@ -11,7 +11,8 @@ const FavoritePage = async () => {
 
   if (!isLoggedIn) {
     redirect("/login");
-  } else {
+  } 
+  try{
     const user = await wixClient.members.getCurrentMember();
     const favoriteQuery = await wixClient.items
       .queryDataItems({
@@ -55,7 +56,15 @@ const FavoritePage = async () => {
         )}
       </div>
     );
+  }catch (error) {
+    console.error('Error fetching current member:', error);
+    return (
+      <div className="flex flex-col items-center justify-center mt-20">
+        Unable to fetch profile information. Please log in.
+      </div>
+    );
   }
+
 };
 
 export default FavoritePage;
