@@ -11,6 +11,7 @@ const FavoritePage = async () => {
 
   if (!isLoggedIn) {
     redirect("/login");
+    return;
   }
 
   const user = await wixClient.members.getCurrentMember();
